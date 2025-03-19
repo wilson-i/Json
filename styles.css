@@ -54,3 +54,19 @@ pre::-webkit-scrollbar-thumb:hover {
 .json-formatter-copy:active {
     transform: translateY(1px);
 }
+
+/* 数组样式 */
+.json-array {
+    color: #4a9eff;
+}
+
+/* 对象样式 */
+.json-object {
+    color: #c586c0;
+}
+
+/* 折叠时的样式 */
+.collapsed-content .json-array,
+.collapsed-content .json-object {
+    opacity: 0.8;
+}

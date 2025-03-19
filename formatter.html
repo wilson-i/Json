@@ -4,60 +4,279 @@
     <meta charset="UTF-8">
     <title>W-JSON Formatter</title>
     <style>
+        :root {
+            --bg-color: #1e1e1e;
+            --text-color: #d4d4d4;
+            --border-color: #404040;
+            --hover-color: #2d2d2d;
+        }
+
+        :root[data-theme='light'] {
+            --bg-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #e0e0e0;
+            --hover-color: #f5f5f5;
+        }
+
         body {
             margin: 0;
             padding: 20px;
-            background: #1e1e1e;
-            color: #d4d4d4;
+            background: var(--bg-color);
+            color: var(--text-color);
             font-family: 'Monaco', 'Consolas', monospace;
+            transition: all 0.3s;
         }
+
         .container {
-            max-width: 1200px;
-            margin: 0 auto;
+            display: flex;
+            gap: 20px;
+            height: calc(100vh - 40px);
         }
+
+        .panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
         textarea {
-            width: 100%;
-            height: 300px;
-            margin-bottom: 20px;
+            flex: 1;
             padding: 15px;
-            background: #2d2d2d;
-            color: #d4d4d4;
-            border: 1px solid #404040;
+            background: var(--hover-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
             font-family: inherit;
             font-size: 14px;
-            resize: vertical;
+            resize: none;
         }
-        #output {
-            width: 100%;
-            min-height: 300px;
-            padding: 15px;
-            background: #2d2d2d;
-            border: 1px solid #404040;
-            border-radius: 8px;
-            white-space: pre;
-            overflow-x: auto;
+
+        .toolbar {
+            margin-bottom: 10px;
+            display: flex;
+            gap: 10px;
         }
+
         button {
-            padding: 10px 20px;
+            padding: 8px 16px;
             background: #0078d4;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-bottom: 20px;
         }
+
         button:hover {
             background: #106ebe;
         }
+
+        .json-viewer {
+            flex: 1;
+            padding: 15px;
+            background: var(--hover-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: auto;
+            font-size: 14px;
+            white-space: pre;           /* 添加这行 */
+            font-family: monospace;     /* 添加这行 */
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+            color: #666;
+            margin: 0;  /* 移除margin */
+        }
+
+        .json-key {
+            color: #9cdcfe;
+            margin-right: 0;  /* 确保key和冒号之间没有额外空格 */
+        }
+
+        .collapsible::before {
+            content: '▼';
+            display: inline-block;
+            transition: transform 0.2s;
+            font-size: 10px;
+        }
+
+        .collapsible.collapsed::before {
+            transform: rotate(-90deg);
+        }
+
+        .collapsible.collapsed + .bracket-content .collapsible-content {
+            display: none;
+        }
+
+        .bracket-content {
+            display: inline;
+        }
+
+        .dots {
+            display: none;
+            color: #666;
+            margin: 0 2px;
+        }
+
+        .collapsible.collapsed ~ .bracket-content .dots {
+            display: inline;
+        }
+
+        .collapsible.collapsed ~ .bracket-content .collapsible-content {
+            display: none;
+        }
+
+        .bracket-content {
+            display: inline;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+            color: #666;
+            margin-left: 4px;  /* 确保与冒号之间只有一个空格的距离 */
+        }
+
+        .collapsible::before {
+            content: '▼';
+            display: inline-block;
+            transition: transform 0.2s;
+            font-size: 12px;
+        }
+
+        .collapsible.collapsed::before {
+            transform: rotate(-90deg);
+        }
+
+        .json-viewer {
+            flex: 1;
+            padding: 20px;
+            background: var(--hover-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: auto;
+            font-size: 14px;
+            white-space: pre;
+            font-family: 'Monaco', 'Menlo', monospace;
+            line-height: 1.6;
+            letter-spacing: 0.3px;
+        }
+
+        .json-key { 
+            color: #9cdcfe; 
+            font-weight: 500;
+        }
+        .json-string { 
+            color: #ce9178; 
+        }
+        .json-number { 
+            color: #b5cea8; 
+        }
+        .json-boolean { 
+            color: #569cd6; 
+            font-weight: 500;
+        }
+        .json-null { 
+            color: #569cd6; 
+            font-style: italic;
+        }
+
+        .collapsible {
+            cursor: pointer;
+            user-select: none;
+            display: inline-block;
+            width: 12px;
+            text-align: center;
+            color: #808080;
+            opacity: 0.7;
+            transition: opacity 0.2s;
+        }
+
+        .collapsible:hover {
+            opacity: 1;
+        }
+
+        .collapsible::before {
+            content: '▼';
+            display: inline-block;
+            transition: transform 0.2s ease;
+            font-size: 10px;
+        }
+
+        .dots {
+            color: #808080;
+            opacity: 0.8;
+            margin: 0 2px;
+            user-select: none;
+        }
+
+        /* 添加高亮效果 */
+        .json-viewer span:hover {
+            background-color: rgba(86, 156, 214, 0.1);
+            border-radius: 2px;
+        }
+            line-height: 1.5;
+        }
+
+        .collapsible-content {
+            position: relative;  /* 添加这行 */
+        }
+
+        .json-key { color: #9cdcfe; }
+        .json-string { color: #ce9178; }
+        .json-number { color: #b5cea8; }
+        .json-boolean { color: #569cd6; }
+        .json-null { color: #569cd6; }
     </style>
 </head>
 <body>
     <div class="container">
-        <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
-        <button id="format">格式化</button>
-        <pre id="output"></pre>
+        <div class="panel">
+            <div class="toolbar">
+                <button id="format">格式化</button>
+                <button id="toggleTheme">切换主题</button>
+            </div>
+            <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
+        </div>
+        <div class="panel">
+            <div id="json-viewer" class="json-viewer"></div>
+        </div>
     </div>
     <script src="formatter.js"></script>
 </body>
 </html>
+
+.preview {
+            display: none;
+            color: #666;
+            margin: 0 2px;
+        }
+
+        .collapsible.collapsed + .bracket-content .preview {
+            display: inline;
+        }
+
+        .collapsible.collapsed + .bracket-content .collapsible-content {
+            display: none;
+        }
+
+        .bracket-content {
+            display: inline;
+        }
+
+        .value-wrapper.collapsed {
+            display: none;
+            color: #666;
+            margin-left: 4px;
+        }
+
+        .value-wrapper {
+            display: inline;
+        }
