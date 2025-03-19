@@ -5,10 +5,9 @@
   "description": "格式化JSON数据，使其更易读",
   "permissions": [
     "activeTab",
-    "scripting"
-  ],
-  "host_permissions": [
-    "<all_urls>"
+    "scripting",
+    "tabs",
+    "storage"
   ],
   "action": {
     "default_icon": {
@@ -19,22 +18,5 @@
   },
   "background": {
     "service_worker": "background.js"
-  },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "css": ["styles.css"],
-      "run_at": "document_end"
-    }
-  ],
-  "commands": {
-    "open-formatter": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+J",
-        "mac": "Command+Shift+J"
-      },
-      "description": "打开 JSON 格式化工具"
-    }
   }
 }

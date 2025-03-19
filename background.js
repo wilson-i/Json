@@ -1,13 +1,7 @@
-// 监听扩展图标点击事件
-chrome.action.onClicked.addListener((tab) => {
-    // 创建新窗口
-    chrome.windows.create({
-        url: 'formatter.html',
-        type: 'popup',
-        width: 1200,
-        height: 800,
-        left: (screen.width - 1200) / 2,
-        top: (screen.height - 800) / 2
+chrome.action.onClicked.addListener(function(tab) {
+    const formatterURL = chrome.runtime.getURL('formatter.html');
+    chrome.tabs.create({
+        url: formatterURL
     });
 });
 

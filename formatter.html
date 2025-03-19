@@ -3,7 +3,6 @@
 <head>
     <meta charset="UTF-8">
     <title>W-JSON Formatter</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
     <style>
         body {
             margin: 0;
@@ -13,17 +12,13 @@
             font-family: 'Monaco', 'Consolas', monospace;
         }
         .container {
-            display: flex;
-            gap: 20px;
-            height: calc(100vh - 40px);
-        }
-        .panel {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
+            max-width: 1200px;
+            margin: 0 auto;
         }
         textarea {
-            flex: 1;
+            width: 100%;
+            height: 300px;
+            margin-bottom: 20px;
             padding: 15px;
             background: #2d2d2d;
             color: #d4d4d4;
@@ -31,23 +26,26 @@
             border-radius: 8px;
             font-family: inherit;
             font-size: 14px;
-            resize: none;
+            resize: vertical;
         }
         #output {
-            flex: 1;
+            width: 100%;
+            min-height: 300px;
             padding: 15px;
             background: #2d2d2d;
+            border: 1px solid #404040;
             border-radius: 8px;
-            overflow: auto;
+            white-space: pre;
+            overflow-x: auto;
         }
         button {
-            margin: 10px 0;
             padding: 10px 20px;
             background: #0078d4;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-bottom: 20px;
         }
         button:hover {
             background: #106ebe;
@@ -56,16 +54,10 @@
 </head>
 <body>
     <div class="container">
-        <div class="panel">
-            <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
-            <button id="formatBtn">格式化</button>
-        </div>
-        <div class="panel">
-            <pre id="output"><code class="language-json"></code></pre>
-        </div>
+        <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
+        <button id="format">格式化</button>
+        <pre id="output"></pre>
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/prism.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/prismjs/1.29.0/components/prism-json.min.js"></script>
     <script src="formatter.js"></script>
 </body>
 </html>
