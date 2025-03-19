@@ -15,8 +15,7 @@
       "16": "images/icon16.png",
       "48": "images/icon48.png",
       "128": "images/icon128.png"
-    },
-    "default_popup": "popup.html"
+    }
   },
   "background": {
     "service_worker": "background.js"
@@ -28,5 +27,14 @@
       "css": ["styles.css"],
       "run_at": "document_end"
     }
-  ]
+  ],
+  "commands": {
+    "open-formatter": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+J",
+        "mac": "Command+Shift+J"
+      },
+      "description": "打开 JSON 格式化工具"
+    }
+  }
 }
