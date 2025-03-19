@@ -1,14 +1,23 @@
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('input');
-    const formatBtn = document.getElementById('format');
-    const themeBtn = document.getElementById('toggleTheme');
     const jsonViewer = document.getElementById('json-viewer');
 
-    // 主题切换
-    themeBtn.addEventListener('click', () => {
-        const root = document.documentElement;
-        const isLight = root.getAttribute('data-theme') === 'light';
-        root.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    // 监听输入变化
+    let formatTimer;
+    input.addEventListener('input', () => {
+        clearTimeout(formatTimer);
+        formatTimer = setTimeout(() => {
+            try {
+                const json = JSON.parse(input.value);
+                jsonViewer.innerHTML = createJsonView(json);
+            } catch (e) {
+                if (input.value.trim()) {
+                    jsonViewer.innerHTML = `<span style="color: #f44336">错误：${e.message}</span>`;
+                } else {
+                    jsonViewer.innerHTML = '';
+                }
+            }
+        }, 300);
     });
 
     // 创建可折叠的JSON视图
@@ -29,10 +38,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (hasItemChildren) {
                     itemHtml += '<span class="collapsible"></span>';
                     itemHtml += '<span class="line-content">';
+                    itemHtml += `<span class="array-index">[${i}]</span> `;
                     itemHtml += createJsonView(item, level + 1).trim();
                     itemHtml += '</span>';
-                    itemHtml += `<span class="collapsed-content" style="display: none">${Array.isArray(item) ? '<span class="json-array">[...]</span>' : '<span class="json-object">{...}</span>'}</span>`;
+                    itemHtml += `<span class="collapsed-content" style="display: none"><span class="array-index">[${i}]</span> ${Array.isArray(item) ? '<span class="json-array">[...]</span>' : '<span class="json-object">{...}</span>'}</span>`;
                 } else {
+                    itemHtml += `<span class="array-index">[${i}]</span> `;
                     itemHtml += createJsonView(item, level + 1).trim();
                 }
                 return itemHtml + comma;
@@ -99,20 +110,5 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/'/g, '&#039;');
     }
 
-    // 格式化JSON
-    formatBtn.addEventListener('click', () => {
-        try {
-            const json = JSON.parse(input.value);
-            jsonViewer.innerHTML = createJsonView(json);
-        } catch (e) {
-            jsonViewer.innerHTML = `<span style="color: #f44336">错误：${e.message}</span>`;
-        }
-    });
-
-    // 快捷键支持
-    document.addEventListener('keydown', (e) => {
-        if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') {
-            formatBtn.click();
-        }
-    });
+    // 移除格式化按钮、主题切换和快捷键相关代码
 });

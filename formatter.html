@@ -27,20 +27,30 @@
             transition: all 0.3s;
         }
 
+        /* 移除按钮和工具栏相关样式 */
+        .toolbar, button {
+            display: none;
+        }
+
+        /* 调整容器布局，移除工具栏空间 */
+        /* 调整容器布局 */
         .container {
             display: flex;
             gap: 20px;
             height: calc(100vh - 40px);
+            min-height: 600px;
         }
 
         .panel {
             flex: 1;
+            height: 100%;
             display: flex;
-            flex-direction: column;
         }
 
         textarea {
-            flex: 1;
+            width: 100%;
+            height: 100%;
+            margin: 0;
             padding: 15px;
             background: var(--hover-color);
             color: var(--text-color);
@@ -49,6 +59,22 @@
             font-family: inherit;
             font-size: 14px;
             resize: none;
+            box-sizing: border-box;
+        }
+
+        .json-viewer {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 15px;
+            background: var(--hover-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            overflow: auto;
+            font-size: 14px;
+            white-space: pre;
+            font-family: monospace;
+            box-sizing: border-box;
         }
 
         .toolbar {
@@ -249,34 +275,93 @@
             <div id="json-viewer" class="json-viewer"></div>
         </div>
     </div>
+    <button class="pin-button" id="pinButton">📌</button>
+    <!-- 移除重复的 script 标签 -->
     <script src="formatter.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const pinButton = document.getElementById('pinButton');
+            const container = document.querySelector('.container');
+            let isPinned = false;
+            let originalHeight;
+            let originalWidth;
+
+            // 点击切换固定状态
+            pinButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (isPinned) {
+                    // 解除固定
+                    isPinned = false;
+                    pinButton.classList.remove('pinned');
+                    container.style.height = originalHeight || 'calc(100vh - 40px)';
+                    container.style.width = originalWidth || '100%';
+                    document.documentElement.style.overflow = 'auto';
+                } else {
+                    // 固定窗口
+                    isPinned = true;
+                    pinButton.classList.add('pinned');
+                    originalHeight = container.offsetHeight + 'px';
+                    originalWidth = container.offsetWidth + 'px';
+                    container.style.height = originalHeight;
+                    container.style.width = originalWidth;
+                    document.documentElement.style.overflow = 'hidden';
+                }
+            });
+
+            // 监听窗口大小变化
+            window.addEventListener('resize', () => {
+                if (!isPinned) {
+                    container.style.height = 'calc(100vh - 40px)';
+                }
+            });
+        });
+    </script>
+</body>
+<head>
+    <style>
+        .toolbar {
+            display: none;
+        }
+
+        .pin-button {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 1px solid var(--border-color);
+            color: #666;
+            cursor: pointer;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
+            opacity: 0.6;
+            transition: all 0.3s;
+            z-index: 1000;
+        }
+
+        .pin-button:hover {
+            opacity: 1;
+        }
+
+        .pin-button.pinned {
+            background: #e74c3c;
+            color: white;
+            border-color: #c0392b;
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    .pin-button:hover {
+        opacity: 1;
+    }
+
+    .pin-button.pinned {
+        background: #0078d4;
+        opacity: 1;
+    }
 </body>
 </html>
-
-.preview {
-            display: none;
-            color: #666;
-            margin: 0 2px;
-        }
-
-        .collapsible.collapsed + .bracket-content .preview {
-            display: inline;
-        }
-
-        .collapsible.collapsed + .bracket-content .collapsible-content {
-            display: none;
-        }
-
-        .bracket-content {
-            display: inline;
-        }
-
-        .value-wrapper.collapsed {
-            display: none;
-            color: #666;
-            margin-left: 4px;
-        }
-
-        .value-wrapper {
-            display: inline;
-        }
