@@ -3,198 +3,108 @@
 <head>
     <meta charset="UTF-8">
     <title>W-JSON Formatter</title>
+    <link rel="stylesheet" href="styles.css">
     <style>
+        /* 改进的样式 */
         :root {
-            --bg-color: #1e1e1e;
-            --text-color: #d4d4d4;
+            --primary-color: #0078d4;
+            --bg-dark: #1e1e1e;
+            --text-light: #d4d4d4;
             --border-color: #404040;
-            --hover-color: #2d2d2d;
         }
-
-        :root[data-theme='light'] {
-            --bg-color: #ffffff;
-            --text-color: #333333;
-            --border-color: #e0e0e0;
-            --hover-color: #f5f5f5;
-        }
-
-        body {
-            margin: 0;
-            padding: 20px;
-            background: var(--bg-color);
-            color: var(--text-color);
-            font-family: 'Monaco', 'Consolas', monospace;
-            transition: all 0.3s;
-        }
-
-        /* 移除按钮和工具栏相关样式 */
-        .toolbar, button {
-            display: none;
-        }
-
-        /* 调整容器布局，移除工具栏空间 */
-        /* 调整容器布局 */
-        .container {
-            display: flex;
-            gap: 20px;
-            height: calc(100vh - 40px);
-            min-height: 600px;
-        }
-
-        .panel {
-            flex: 1;
-            height: 100%;
-            display: flex;
-        }
-
-        textarea {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 15px;
-            background: var(--hover-color);
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            font-family: inherit;
-            font-size: 14px;
-            resize: none;
-            box-sizing: border-box;
-        }
-
+        
         .json-viewer {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 15px;
-            background: var(--hover-color);
+            padding: 20px;
+            line-height: 1.5;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            overflow: auto;
+            border-radius: 8px;
+            background-color: var(--bg-dark);
+        }
+        
+        textarea#input {
+            padding: 20px;
+            font-family: 'Monaco', 'Consolas', monospace;
+            font-size: 14px;
+            background-color: #2d2d2d;
+            color: var(--text-light);
             border: 1px solid var(--border-color);
             border-radius: 8px;
-            overflow: auto;
-            font-size: 14px;
-            white-space: pre;
-            font-family: monospace;
-            box-sizing: border-box;
+            resize: none;
         }
-
-        .toolbar {
-            margin-bottom: 10px;
-            display: flex;
-            gap: 10px;
-        }
-
-        button {
-            padding: 8px 16px;
-            background: #0078d4;
+        
+        /* 改进的按钮样式 */
+        .minimize-btn {
+            position: absolute !important;
+            top: 15px;
+            right: 15px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--primary-color);
             color: white;
             border: none;
-            border-radius: 4px;
+            display: flex !important;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
+            z-index: 9999 !important;
+            font-size: 18px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
         }
-
-        button:hover {
+        
+        .minimize-btn:hover {
             background: #106ebe;
+            transform: scale(1.05);
         }
-
-        .json-viewer {
-            flex: 1;
-            padding: 15px;
-            background: var(--hover-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: auto;
-            font-size: 14px;
-            white-space: pre;           /* 添加这行 */
-            font-family: monospace;     /* 添加这行 */
-        }
-
-        .collapsible {
+        
+        #expandBtn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-color);
+            color: white;
+            border: none;
+            display: none;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            user-select: none;
-            display: inline-block;
-            width: 12px;
-            text-align: center;
-            color: #666;
-            margin: 0;  /* 移除margin */
+            z-index: 1000;
+            font-size: 20px;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
         }
-
-        .json-key {
-            color: #9cdcfe;
-            margin-right: 0;  /* 确保key和冒号之间没有额外空格 */
+        
+        #expandBtn:hover {
+            background: #106ebe;
+            transform: scale(1.05);
         }
-
-        .collapsible::before {
-            content: '▼';
-            display: inline-block;
-            transition: transform 0.2s;
-            font-size: 10px;
+        
+        /* 最小化模式的样式 */
+        .minimized-mode #viewerPanel {
+            width: 100% !important;
+            position: absolute !important;
+            left: 0 !important;
+            top: 0 !important;
+            right: 0 !important;
+            bottom: 0 !important;
+            padding: 20px !important;
         }
-
-        .collapsible.collapsed::before {
-            transform: rotate(-90deg);
+        
+        .minimized-mode #inputPanel {
+            display: none !important;
         }
-
-        .collapsible.collapsed + .bracket-content .collapsible-content {
-            display: none;
+        
+        .minimized-mode #expandBtn {
+            display: flex !important;
         }
-
-        .bracket-content {
-            display: inline;
-        }
-
-        .dots {
-            display: none;
-            color: #666;
-            margin: 0 2px;
-        }
-
-        .collapsible.collapsed ~ .bracket-content .dots {
-            display: inline;
-        }
-
-        .collapsible.collapsed ~ .bracket-content .collapsible-content {
-            display: none;
-        }
-
-        .bracket-content {
-            display: inline;
-        }
-
-        .collapsible {
-            cursor: pointer;
-            user-select: none;
-            display: inline-block;
-            width: 20px;
-            text-align: center;
-            color: #666;
-            margin-left: 4px;  /* 确保与冒号之间只有一个空格的距离 */
-        }
-
-        .collapsible::before {
-            content: '▼';
-            display: inline-block;
-            transition: transform 0.2s;
-            font-size: 12px;
-        }
-
-        .collapsible.collapsed::before {
-            transform: rotate(-90deg);
-        }
-
-        .json-viewer {
-            flex: 1;
-            padding: 20px;
-            background: var(--hover-color);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            overflow: auto;
-            font-size: 14px;
-            white-space: pre;
-            font-family: 'Monaco', 'Menlo', monospace;
-            line-height: 1.6;
-            letter-spacing: 0.3px;
-        }
-
+        
+        /* JSON语法高亮颜色改进 */
         .json-key { 
             color: #9cdcfe; 
             font-weight: 500;
@@ -213,144 +123,69 @@
             color: #569cd6; 
             font-style: italic;
         }
-
+        
+        /* 改进折叠图标样式 */
         .collapsible {
             cursor: pointer;
-            user-select: none;
-            display: inline-block;
-            width: 12px;
-            text-align: center;
-            color: #808080;
-            opacity: 0.7;
-            transition: opacity 0.2s;
+            opacity: 0.8;
+            transition: all 0.2s;
         }
-
+        
         .collapsible:hover {
             opacity: 1;
+            transform: scale(1.1);
         }
-
-        .collapsible::before {
-            content: '▼';
-            display: inline-block;
-            transition: transform 0.2s ease;
-            font-size: 10px;
-        }
-
-        .dots {
-            color: #808080;
-            opacity: 0.8;
-            margin: 0 2px;
-            user-select: none;
-        }
-
-        /* 添加高亮效果 */
-        .json-viewer span:hover {
-            background-color: rgba(86, 156, 214, 0.1);
-            border-radius: 2px;
-            line-height: 1.5;
-        }
-
-        .collapsible-content {
-            position: relative;  /* 添加这行 */
-        }
-
-        .json-key { color: #9cdcfe; }
-        .json-string { color: #ce9178; }
-        .json-number { color: #b5cea8; }
-        .json-boolean { color: #569cd6; }
-        .json-null { color: #569cd6; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="panel">
-            <div class="toolbar">
-                <button id="format">格式化</button>
-                <button id="toggleTheme">切换主题</button>
-            </div>
-            <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
-        </div>
-        <div class="panel">
+    <div class="container" id="mainContainer">
+        <div class="panel" id="viewerPanel">
             <div id="json-viewer" class="json-viewer"></div>
         </div>
+        <div class="panel" id="inputPanel">
+            <button class="minimize-btn" id="minimizeBtn" onclick="minimizePanel()">−</button>
+            <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
+        </div>
     </div>
-    <button class="pin-button" id="pinButton">📌</button>
-    <!-- 移除重复的 script 标签 -->
+    <button id="expandBtn" onclick="expandPanel()">+</button>
+
     <script src="formatter.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
-            const pinButton = document.getElementById('pinButton');
-            const container = document.querySelector('.container');
-            let isPinned = false;
-            let originalHeight;
-            let originalWidth;
-
-            // 点击切换固定状态
-            pinButton.addEventListener('click', (e) => {
-                e.stopPropagation();
-                if (isPinned) {
-                    // 解除固定
-                    isPinned = false;
-                    pinButton.classList.remove('pinned');
-                    container.style.height = originalHeight || 'calc(100vh - 40px)';
-                    container.style.width = originalWidth || '100%';
-                    document.documentElement.style.overflow = 'auto';
-                } else {
-                    // 固定窗口
-                    isPinned = true;
-                    pinButton.classList.add('pinned');
-                    originalHeight = container.offsetHeight + 'px';
-                    originalWidth = container.offsetWidth + 'px';
-                    container.style.height = originalHeight;
-                    container.style.width = originalWidth;
-                    document.documentElement.style.overflow = 'hidden';
-                }
-            });
-
+            const container = document.getElementById('mainContainer');
+            
             // 监听窗口大小变化
             window.addEventListener('resize', () => {
-                if (!isPinned) {
-                    container.style.height = 'calc(100vh - 40px)';
-                }
+                container.style.height = 'calc(100vh - 40px)';
             });
         });
+
+        // 全局函数
+        function minimizePanel() {
+            console.log('最小化函数被调用');
+            document.body.classList.add('minimized-mode');
+            document.getElementById('inputPanel').style.display = 'none';
+            document.getElementById('viewerPanel').style.width = '100%';
+            document.getElementById('viewerPanel').style.position = 'absolute';
+            document.getElementById('viewerPanel').style.left = '0';
+            document.getElementById('viewerPanel').style.top = '0';
+            document.getElementById('viewerPanel').style.right = '0';
+            document.getElementById('viewerPanel').style.bottom = '0';
+            document.getElementById('expandBtn').style.display = 'flex';
+        }
+        
+        function expandPanel() {
+            console.log('展开函数被调用');
+            document.body.classList.remove('minimized-mode');
+            document.getElementById('inputPanel').style.display = '';
+            document.getElementById('viewerPanel').style.width = '';
+            document.getElementById('viewerPanel').style.position = '';
+            document.getElementById('viewerPanel').style.left = '';
+            document.getElementById('viewerPanel').style.top = '';
+            document.getElementById('viewerPanel').style.right = '';
+            document.getElementById('viewerPanel').style.bottom = '';
+            document.getElementById('expandBtn').style.display = 'none';
+        }
     </script>
 </body>
-<head>
-    <style>
-        .toolbar {
-            display: none;
-        }
-
-        .pin-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: white;
-            border: 1px solid var(--border-color);
-            color: #666;
-            cursor: pointer;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            opacity: 0.6;
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-
-        .pin-button:hover {
-            opacity: 1;
-        }
-
-        .pin-button.pinned {
-            background: #e74c3c;
-            color: white;
-            border-color: #c0392b;
-            opacity: 1;
-        }
-    </style>
-</head>
 </html>

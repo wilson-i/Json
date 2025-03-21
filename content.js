@@ -32,7 +32,8 @@ function formatJSON() {
         }, 2000);
     };
     
-    document.body.appendChild(copyButton);
+    // 在pre元素旁边添加按钮，而不是直接添加到body
+    pre.parentNode.insertBefore(copyButton, pre.nextSibling);
 }
 
 // 页面加载完成后执行格式化

@@ -90,13 +90,103 @@ pre::-webkit-scrollbar-thumb:hover {
     border-radius: 3px;
 }
 
+/* 主题变量设置 */
+:root {
+    --bg-color: #1e1e1e;
+    --text-color: #d4d4d4;
+    --border-color: #404040;
+    --hover-color: #2d2d2d;
+}
 
-/* 输入区域和按钮布局 */
+:root[data-theme='light'] {
+    --bg-color: #ffffff;
+    --text-color: #333333;
+    --border-color: #e0e0e0;
+    --hover-color: #f5f5f5;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Monaco', 'Consolas', monospace;
+    transition: all 0.3s;
+}
+
+/* Formatter页面特定布局 */
 .container {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
-    padding: 20px;
+    gap: 20px;
+    height: calc(100vh - 40px);
+    min-height: 600px;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+}
+
+.panel {
+    flex: 1;
+    height: 100%;
+    display: flex;
+}
+
+/* 左侧面板 - 可最小化 */
+.panel:last-child {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#inputPanel {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.panel.minimized {
+    flex: 0;
+    max-width: 30px;
+}
+
+/* 当输入面板最小化时，让显示面板扩展 */
+.panel:first-child {
+    transition: flex 0.3s ease;
+}
+
+/* 最小化时的样式 - 完全重写 */
+.container.has-minimized-input {
+    display: block !important;
+    position: relative !important;
+}
+
+#inputPanel.minimized {
+    position: fixed !important;
+    right: 20px !important;
+    top: 20px !important;
+    width: 30px !important;
+    height: 30px !important;
+    max-width: 30px !important;
+    min-width: 30px !important;
+    flex: none !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    border: none !important;
+    z-index: 900 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+#viewerPanel {
+    transition: all 0.3s ease;
+}
+
+.container.has-minimized-input #viewerPanel {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    right: 0 !important; 
+    bottom: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
 }
 
 .button-group {
@@ -107,22 +197,42 @@ pre::-webkit-scrollbar-thumb:hover {
 
 #input {
     width: 100%;
-    min-height: 100px;
-    padding: 10px;
-    border-radius: 4px;
-    background-color: #1e1e1e;
-    color: #d4d4d4;
-    border: 1px solid #333;
-    font-family: 'Monaco', 'Consolas', monospace;
-    resize: vertical;
+    height: 100%;
+    margin: 0;
+    padding: 15px;
+    background: var(--hover-color);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: none;
+    box-sizing: border-box;
 }
 
 #format {
-    margin-right: auto;
+    display: none;
 }
 
 #toggleTheme {
-    margin-left: auto;
+    display: none;
+}
+
+.toolbar {
+    display: none;
+}
+
+button {
+    padding: 8px 16px;
+    background: #0078d4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #106ebe;
 }
 
 .viewer-container {
@@ -132,12 +242,21 @@ pre::-webkit-scrollbar-thumb:hover {
     margin-top: 10px;
 }
 
-#json-viewer {
-    font-family: 'Monaco', 'Consolas', monospace;
+.json-viewer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 15px;
+    background: var(--hover-color);
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    overflow: auto;
     font-size: 14px;
-    line-height: 1.5;
-    color: #d4d4d4;
     white-space: pre;
+    font-family: 'Monaco', 'Menlo', monospace;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    box-sizing: border-box;
 }
 
 /* 移除之前的 pre 相关样式 */
@@ -146,7 +265,118 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .array-index {
-    color: #666;
-    font-size: 12px;
+    color: #888;
+    font-size: 0.9em;
+    margin-right: 4px;
+}
+
+.collapsible {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    text-align: center;
+    cursor: pointer;
+    color: #888;
+    font-size: 10px;
+    vertical-align: middle;
     user-select: none;
+}
+
+.collapsible-content {
+    display: block;
+}
+
+/* 美化滚动条 */
+::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+}
+
+::-webkit-scrollbar-track {
+    background: #2d2d2d;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #555;
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+}
+
+/* JSON语法高亮 */
+.json-key { 
+    color: #9cdcfe; 
+    font-weight: 500;
+    margin-right: 0;
+}
+.json-string { color: #ce9178; }
+.json-number { color: #b5cea8; }
+.json-boolean { 
+    color: #569cd6; 
+    font-weight: 500;
+}
+.json-null { 
+    color: #569cd6; 
+    font-style: italic;
+}
+
+/* 添加高亮效果 */
+.json-viewer span:hover {
+    background-color: rgba(86, 156, 214, 0.1);
+    border-radius: 2px;
+    line-height: 1.5;
+}
+
+/* 最小化按钮样式 */
+.minimize-btn {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: #0078d4;
+    border: 1px solid var(--border-color);
+    color: white;
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    font-size: 14px;
+    opacity: 0.9;
+    transition: all 0.3s ease;
+    pointer-events: auto;
+    user-select: none;
+}
+
+/* 最小化时的按钮样式 */
+#inputPanel.minimized .minimize-btn {
+    position: static;
+    width: 30px;
+    height: 30px;
+    opacity: 1;
+    background: #0078d4;
+    border: 1px solid var(--border-color);
+    color: white;
+    z-index: 1000;
+    pointer-events: auto;
+}
+
+.minimize-btn:hover {
+    opacity: 1;
+}
+
+/* 最小化时输入区域完全隐藏 */
+#input.minimized {
+    display: none !important;
+}
+
+/* 改进JSON显示样式 */
+.array-item, .object-item {
+    margin: 4px 0;
+    padding-left: 20px;
 }

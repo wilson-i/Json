@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function() {
             try {
                 const json = JSON.parse(input.value);
                 jsonViewer.innerHTML = createJsonView(json);
+                // 添加折叠/展开功能
+                setupCollapsible();
             } catch (e) {
                 if (input.value.trim()) {
                     jsonViewer.innerHTML = `<span style="color: #f44336">错误：${e.message}</span>`;
@@ -20,58 +22,72 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     });
 
-    // 创建可折叠的JSON视图
+    // 创建可折叠的JSON视图，改进显示格式
     function createJsonView(obj, level = 0) {
         const indent = '    '.repeat(level);
         let html = '';
 
         if (Array.isArray(obj)) {
-            if (obj.length === 0) return indent + '<span class="json-array">[]</span>';
+            if (obj.length === 0) return `<span class="json-array">[]</span>`;
             
-            html += indent + '<span class="json-array">[</span>';
+            html += `<span class="json-array">[</span>`;
+            if (obj.length > 0) {
+                html += `<span class="collapsible"></span>`;
+                html += `<div class="collapsible-content">`;
+            }
+            
             html += obj.map((item, i) => {
                 const comma = i < obj.length - 1 ? ',' : '';
-                const itemIndent = '\n' + indent + '    ';
-                const hasItemChildren = Array.isArray(item) || (item !== null && typeof item === 'object');
+                const hasChildren = Array.isArray(item) || (item !== null && typeof item === 'object' && Object.keys(item).length > 0);
                 
-                let itemHtml = itemIndent;
-                if (hasItemChildren) {
-                    itemHtml += '<span class="collapsible"></span>';
-                    itemHtml += '<span class="line-content">';
-                    itemHtml += `<span class="array-index">[${i}]</span> `;
-                    itemHtml += createJsonView(item, level + 1).trim();
-                    itemHtml += '</span>';
-                    itemHtml += `<span class="collapsed-content" style="display: none"><span class="array-index">[${i}]</span> ${Array.isArray(item) ? '<span class="json-array">[...]</span>' : '<span class="json-object">{...}</span>'}</span>`;
+                let itemHtml = `<div class="array-item" style="padding-left: ${20}px">`;
+                if (hasChildren) {
+                    itemHtml += `<span class="array-index">${i}:</span> `;
+                    itemHtml += createJsonView(item, level + 1);
                 } else {
-                    itemHtml += `<span class="array-index">[${i}]</span> `;
-                    itemHtml += createJsonView(item, level + 1).trim();
+                    itemHtml += `<span class="array-index">${i}:</span> `;
+                    itemHtml += createJsonView(item, level + 1);
                 }
-                return itemHtml + comma;
-            }).join('') + '\n' + indent + '<span class="json-array">]</span>';
+                return itemHtml + comma + '</div>';
+            }).join('');
+            
+            if (obj.length > 0) {
+                html += `</div>`;
+            }
+            
+            html += `<span class="json-array">]</span>`;
         } else if (obj !== null && typeof obj === 'object') {
             const keys = Object.keys(obj);
-            if (keys.length === 0) return indent + '<span class="json-object">{}</span>';
+            if (keys.length === 0) return `<span class="json-object">{}</span>`;
             
-            html += indent + '<span class="json-object">{</span>';
+            html += `<span class="json-object">{</span>`;
+            if (keys.length > 0) {
+                html += `<span class="collapsible"></span>`;
+                html += `<div class="collapsible-content">`;
+            }
+            
             html += keys.map((key, i) => {
                 const comma = i < keys.length - 1 ? ',' : '';
                 const value = obj[key];
-                const itemIndent = '\n' + indent + '    ';
-                const hasValueChildren = Array.isArray(value) || (value !== null && typeof value === 'object');
+                const hasChildren = Array.isArray(value) || (value !== null && typeof value === 'object' && Object.keys(value).length > 0);
                 
-                let itemHtml = itemIndent;
-                if (hasValueChildren) {
-                    itemHtml += '<span class="collapsible"></span>';
-                    itemHtml += '<span class="line-content">';
-                    itemHtml += `<span class="json-key">"${key}"</span>: `;
-                    itemHtml += createJsonView(value, level + 1).trim();
-                    itemHtml += '</span>';
-                    itemHtml += `<span class="collapsed-content" style="display: none"><span class="json-key">"${key}"</span>: ${Array.isArray(value) ? '<span class="json-array">[...]</span>' : '<span class="json-object">{...}</span>'}</span>`;
+                let itemHtml = `<div class="object-item" style="padding-left: ${20}px">`;
+                itemHtml += `<span class="json-key">"${key}"</span>: `;
+                
+                if (hasChildren) {
+                    itemHtml += createJsonView(value, level + 1);
                 } else {
-                    itemHtml += `<span class="json-key">"${key}"</span>: ` + createJsonView(value, level + 1).trim();
+                    itemHtml += createJsonView(value, level + 1);
                 }
-                return itemHtml + comma;
-            }).join('') + '\n' + indent + '<span class="json-object">}</span>';
+                
+                return itemHtml + comma + '</div>';
+            }).join('');
+            
+            if (keys.length > 0) {
+                html += `</div>`;
+            }
+            
+            html += `<span class="json-object">}</span>`;
         } else if (typeof obj === 'string') {
             html += `<span class="json-string">"${escapeHtml(obj)}"</span>`;
         } else if (typeof obj === 'number') {
@@ -85,20 +101,25 @@ document.addEventListener('DOMContentLoaded', function() {
         return html;
     }
 
-    // 处理折叠点击事件
-    jsonViewer.addEventListener('click', (e) => {
-        if (e.target.classList.contains('collapsible')) {
-            e.target.classList.toggle('collapsed');
-            const lineContent = e.target.nextElementSibling;
-            const collapsedContent = lineContent.nextElementSibling;
-            
-            if (lineContent && lineContent.classList.contains('line-content')) {
-                const isCollapsed = e.target.classList.contains('collapsed');
-                lineContent.style.display = isCollapsed ? 'none' : 'inline';
-                collapsedContent.style.display = isCollapsed ? 'inline' : 'none';
-            }
-        }
-    });
+    // 设置折叠/展开功能
+    function setupCollapsible() {
+        const collapsibles = document.querySelectorAll('.collapsible');
+        collapsibles.forEach(collapsible => {
+            collapsible.innerHTML = '▼';
+            collapsible.addEventListener('click', function() {
+                this.classList.toggle('collapsed');
+                const content = this.nextElementSibling;
+                
+                if (this.classList.contains('collapsed')) {
+                    this.innerHTML = '▶';
+                    content.style.display = 'none';
+                } else {
+                    this.innerHTML = '▼';
+                    content.style.display = 'block';
+                }
+            });
+        });
+    }
 
     // HTML转义函数
     function escapeHtml(str) {
@@ -109,6 +130,4 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
-
-    // 移除格式化按钮、主题切换和快捷键相关代码
 });
