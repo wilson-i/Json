@@ -479,23 +479,22 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     position: relative;
 }
 
+/* 修复summary-badge样式，确保折叠时正确显示 */
 .summary-badge {
     display: inline-block;
+    margin-left: 4px;
+    margin-right: 4px;
     font-size: 11px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     color: #bbb;
     background-color: rgba(80, 80, 80, 0.2);
     padding: 1px 6px;
-    margin: 0 4px;
     border-radius: 10px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
+    opacity: 0.9;
+    user-select: none;
+    white-space: nowrap;
     max-width: 300px;
     overflow: hidden;
     text-overflow: ellipsis;
-    white-space: nowrap;
-    user-select: none;
 }
 
 [data-theme="light"] .summary-badge {
@@ -503,46 +502,28 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     background-color: rgba(0, 0, 0, 0.06);
 }
 
-.collapsed ~ .bracket-container .summary-badge,
-.collapsible.collapsed + .bracket-container .summary-badge {
+/* 折叠状态下确保summary-badge始终可见 */
+.collapsible.collapsed + .json-array + .summary-badge,
+.collapsible.collapsed + .json-object + .summary-badge,
+.json-node:has(.collapsible.collapsed) .summary-badge {
+    display: inline-block !important;
     opacity: 1;
-    transform: translateY(0);
+}
+
+/* 确保summary-badge不会被其他元素的pointer-events规则影响 */
+.summary-badge {
+    pointer-events: none !important;
 }
 
 /* 改进折叠状态的视觉效果 */
-.collapsible.collapsed + .bracket-container {
-    position: relative;
-    background-color: rgba(80, 80, 80, 0.1);
-    border-radius: 3px;
-    padding: 2px 4px;
-    margin: 0 2px;
-    border: 1px dashed rgba(150, 150, 150, 0.3);
-    pointer-events: none !important;
-    cursor: default !important;
-}
-
-html[data-theme="light"] .collapsible.collapsed + .bracket-container {
-    background-color: rgba(0, 0, 0, 0.05);
-    border: 1px dashed rgba(0, 0, 0, 0.15);
-}
-
-/* 完全禁用过渡动画以避免闪烁 */
-.contains-collapsed *,
-.bracket-container.collapsed-bracket * {
-    transition: none !important;
-    animation: none !important;
-}
-
-/* 提高折叠状态下的可读性 */
-.collapsible.collapsed + .bracket-container .json-array,
-.collapsible.collapsed + .bracket-container .json-object {
-    color: var(--accent-color) !important;
-    opacity: 0.8;
+.collapsible.collapsed {
+    color: var(--accent-color);
+    font-weight: bold;
 }
 
 /* 折叠状态下的括号样式增强 */
-.collapsible.collapsed + .json-array,
-.collapsible.collapsed + .json-object {
+.collapsible.collapsed ~ .json-array,
+.collapsible.collapsed ~ .json-object {
     position: relative;
     background-color: rgba(80, 80, 80, 0.1);
     border-radius: 3px;
@@ -551,47 +532,28 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container {
     pointer-events: none;
 }
 
-html[data-theme="light"] .collapsible.collapsed + .json-array,
-html[data-theme="light"] .collapsible.collapsed + .json-object {
+[data-theme="light"] .collapsible.collapsed ~ .json-array,
+[data-theme="light"] .collapsible.collapsed ~ .json-object {
     background-color: rgba(0, 0, 0, 0.05);
 }
 
-/* 显示折叠内容的提示 */
-.collapsible.collapsed + .json-array::after,
-.collapsible.collapsed + .json-object::after {
-    content: "...";
-    color: #888;
-    font-style: italic;
-    margin: 0 2px;
+/* 优化json-node结构，确保折叠时简介内容展示 */
+.json-node {
+    display: inline-flex;
+    align-items: center;
     position: relative;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
 }
 
-html[data-theme="light"] .collapsible.collapsed + .json-array::after,
-html[data-theme="light"] .collapsible.collapsed + .json-object::after {
-    color: #666;
+/* 保证在折叠状态下简介内容清晰可见 */
+.collapsible.collapsed ~ .summary-badge {
+    font-weight: normal;
+    color: #777;
 }
 
-/* 提高折叠图标的对比度 */
-.collapsible.collapsed {
-    color: #bbb;
-}
-
-html[data-theme="light"] .collapsible.collapsed {
-    color: #555;
-    background-color: rgba(0, 0, 0, 0.08);
-}
-
-html[data-theme="light"] .collapsible:hover {
-    background-color: var(--accent-color);
-    color: white;
-}
-
-/* 折叠/展开时的动画优化 */
-.collapsible, .json-array, .json-object {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-
-/* 折叠内容样式优化 */
+/* 改进折叠状态的视觉效果 */
 .collapsible-content {
     transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
     padding-left: 24px;

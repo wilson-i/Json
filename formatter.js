@@ -107,6 +107,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
+            // 查找summary-badge元素（简介内容）
+            const summaryBadge = parentNode.querySelector('.summary-badge');
+            if (!summaryBadge) {
+                console.error('找不到summary-badge元素', element);
+            }
+            
             // collapsible-content应该是json-node的下一个兄弟元素
             const contentElement = parentNode.nextElementSibling;
             if (!contentElement || !contentElement.classList.contains('collapsible-content')) {
@@ -118,6 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
             element.textContent = '▼';
             element.classList.remove('collapsed');
             contentElement.style.display = 'block';
+            
+            // 确保简介内容初始状态是显示的
+            if (summaryBadge) {
+                summaryBadge.style.display = 'inline';
+            }
             
             // 使用包装器处理点击事件，增大可点击区域
             wrapper.onclick = function(e) {
@@ -138,6 +149,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.classList.remove('collapsed');
                     contentElement.style.display = 'block';
                     
+                    // 展开时显示简介内容
+                    if (summaryBadge) {
+                        summaryBadge.style.display = 'inline';
+                    }
+                    
                     // 添加极短延迟，避免抖动
                     setTimeout(() => {
                         this.dataset.processing = 'false';
@@ -147,6 +163,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.textContent = '▶';
                     element.classList.add('collapsed');
                     contentElement.style.display = 'none';
+                    
+                    // 折叠时确保简介内容显示
+                    if (summaryBadge) {
+                        summaryBadge.style.display = 'inline';
+                    }
                     
                     // 添加极短延迟，避免抖动
                     setTimeout(() => {
@@ -218,6 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-array">[</span>';
             
+            // 添加简介内容，确保在折叠状态下可见
             if (node.length > 0) {
                 html += '<span class="summary-badge">' + node.length + '项</span>';
             }
@@ -259,6 +281,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-object">{</span>';
             
+            // 添加简介内容，确保在折叠状态下可见
             if (keys.length > 0) {
                 html += '<span class="summary-badge">' + keys.length + '属性 ' + keyPreview + '</span>';
             }
