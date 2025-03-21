@@ -96,13 +96,21 @@ pre::-webkit-scrollbar-thumb:hover {
     --text-color: #d4d4d4;
     --border-color: #404040;
     --hover-color: #2d2d2d;
+    --btn-bg: #333;
+    --btn-color: #ccc;
+    --btn-hover-bg: #444;
+    --btn-hover-color: #fff;
 }
 
 :root[data-theme='light'] {
-    --bg-color: #ffffff;
+    --bg-color: #f8f8f8;
     --text-color: #333333;
-    --border-color: #e0e0e0;
-    --hover-color: #f5f5f5;
+    --border-color: #dddddd;
+    --hover-color: #f0f0f0;
+    --btn-bg: #e0e0e0;
+    --btn-color: #333;
+    --btn-hover-bg: #d0d0d0;
+    --btn-hover-color: #000;
 }
 
 body {
@@ -125,10 +133,15 @@ body {
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
 }
 
+/* 统一面板样式 */
 .panel {
     flex: 1;
     height: 100%;
     display: flex;
+    border: none;
+    overflow: hidden;
+    padding: 0;
+    background: transparent;
 }
 
 /* 左侧面板 - 可最小化 */
@@ -140,6 +153,7 @@ body {
 #inputPanel {
     position: relative;
     transition: all 0.3s ease;
+    min-width: 30%;
 }
 
 .panel.minimized {
@@ -177,6 +191,8 @@ body {
 
 #viewerPanel {
     transition: all 0.3s ease;
+    max-width: 70%;
+    overflow: auto;
 }
 
 .container.has-minimized-input #viewerPanel {
@@ -195,19 +211,21 @@ body {
     margin-bottom: 10px;
 }
 
+/* 保持样式一致性 */
 #input {
     width: 100%;
     height: 100%;
     margin: 0;
     padding: 15px;
-    background: var(--hover-color);
+    background: #2d2d2d;
     color: var(--text-color);
     border: 1px solid var(--border-color);
     border-radius: 8px;
-    font-family: inherit;
+    font-family: 'Monaco', 'Consolas', monospace;
     font-size: 14px;
     resize: none;
     box-sizing: border-box;
+    outline: none;
 }
 
 #format {
@@ -222,17 +240,21 @@ body {
     display: none;
 }
 
-button {
-    padding: 8px 16px;
-    background: #0078d4;
-    color: white;
+.btn {
+    background-color: var(--btn-bg);
+    color: var(--btn-color);
     border: none;
+    padding: 8px 12px;
+    margin: 0 4px;
     border-radius: 4px;
     cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
 }
 
-button:hover {
-    background: #106ebe;
+.btn:hover {
+    background-color: var(--btn-hover-bg);
+    color: var(--btn-hover-color);
 }
 
 .viewer-container {
@@ -333,41 +355,24 @@ button:hover {
 /* 最小化按钮样式 */
 .minimize-btn {
     position: absolute;
+    right: 10px;
     top: 10px;
-    left: 10px;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    background: #0078d4;
-    border: 1px solid var(--border-color);
-    color: white;
-    display: flex !important;
+    background-color: transparent;
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    z-index: 102;
+    font-size: 18px;
+    width: 28px;
+    height: 28px;
+    display: flex;
     align-items: center;
     justify-content: center;
-    cursor: pointer;
-    z-index: 1000;
-    font-size: 14px;
-    opacity: 0.9;
-    transition: all 0.3s ease;
-    pointer-events: auto;
-    user-select: none;
-}
-
-/* 最小化时的按钮样式 */
-#inputPanel.minimized .minimize-btn {
-    position: static;
-    width: 30px;
-    height: 30px;
-    opacity: 1;
-    background: #0078d4;
-    border: 1px solid var(--border-color);
-    color: white;
-    z-index: 1000;
-    pointer-events: auto;
+    border-radius: 4px;
 }
 
 .minimize-btn:hover {
-    opacity: 1;
+    background-color: var(--hover-color);
 }
 
 /* 最小化时输入区域完全隐藏 */
@@ -379,4 +384,15 @@ button:hover {
 .array-item, .object-item {
     margin: 4px 0;
     padding-left: 20px;
+}
+
+/* 在小屏幕上保持合理的尺寸 */
+@media (max-width: 768px) {
+    #viewerPanel {
+        max-width: 60%;
+    }
+    
+    #inputPanel {
+        min-width: 40%;
+    }
 }

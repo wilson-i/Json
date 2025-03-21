@@ -1,6 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('input');
     const jsonViewer = document.getElementById('json-viewer');
+    const formatBtn = document.getElementById('formatBtn');
+    const minifyBtn = document.getElementById('minifyBtn');
+    const copyBtn = document.getElementById('copyBtn');
+    const clearBtn = document.getElementById('clearBtn');
 
     // 监听输入变化
     let formatTimer;
@@ -130,4 +134,37 @@ document.addEventListener('DOMContentLoaded', function() {
             .replace(/"/g, '&quot;')
             .replace(/'/g, '&#039;');
     }
+
+    // 添加控制按钮的事件监听
+    formatBtn.addEventListener('click', function() {
+        try {
+            const json = JSON.parse(input.value);
+            input.value = JSON.stringify(json, null, 4);
+            processInput();
+        } catch (e) {
+            // 如果解析失败，不改变内容
+            console.error('Invalid JSON:', e);
+        }
+    });
+    
+    minifyBtn.addEventListener('click', function() {
+        try {
+            const json = JSON.parse(input.value);
+            input.value = JSON.stringify(json);
+            processInput();
+        } catch (e) {
+            // 如果解析失败，不改变内容
+            console.error('Invalid JSON:', e);
+        }
+    });
+    
+    copyBtn.addEventListener('click', function() {
+        input.select();
+        document.execCommand('copy');
+    });
+    
+    clearBtn.addEventListener('click', function() {
+        input.value = '';
+        document.getElementById('json-viewer').innerHTML = '';
+    });
 });
