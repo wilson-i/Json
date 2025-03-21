@@ -2,7 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('input');
     const jsonViewer = document.getElementById('json-viewer');
     const formatBtn = document.getElementById('formatBtn');
-    const minifyBtn = document.getElementById('minifyBtn');
     const toast = document.getElementById('toast');
     const toggleAllBtn = document.getElementById('toggleAllBtn');
     
@@ -11,7 +10,6 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: 'input', element: input },
         { name: 'jsonViewer', element: jsonViewer },
         { name: 'formatBtn', element: formatBtn },
-        { name: 'minifyBtn', element: minifyBtn },
         { name: 'toast', element: toast },
         { name: 'toggleAllBtn', element: toggleAllBtn }
     ];
@@ -408,22 +406,6 @@ document.addEventListener('DOMContentLoaded', function() {
             // 添加动画效果
             formatBtn.classList.add('btn-active');
             setTimeout(() => formatBtn.classList.remove('btn-active'), 300);
-        } else {
-            showToast("请输入JSON数据");
-        }
-    });
-    
-    // 压缩按钮
-    minifyBtn.addEventListener('click', () => {
-        if (input.value.trim()) {
-            const json = JSON.parse(input.value);
-            input.value = JSON.stringify(json);
-            processInput();
-            showToast('压缩成功');
-            
-            // 添加动画效果
-            minifyBtn.classList.add('btn-active');
-            setTimeout(() => minifyBtn.classList.remove('btn-active'), 300);
         } else {
             showToast("请输入JSON数据");
         }
