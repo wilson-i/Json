@@ -434,6 +434,14 @@ document.addEventListener('DOMContentLoaded', function() {
         // 按钮的初始状态为"展开全部"
         let isExpanded = false;
         
+        // 初始化按钮文本
+        const buttonIcon = toggleAllBtn.querySelector('i');
+        const buttonTextNode = toggleAllBtn.childNodes[1]; // 获取文本节点
+        
+        // 设置初始状态的文本
+        buttonIcon.className = 'fa fa-plus-square-o';
+        buttonTextNode.nodeValue = ' 展开全部';
+        
         toggleAllBtn.addEventListener('click', () => {
             // 检查当前折叠状态，决定执行操作
             if (isExpanded) {
@@ -446,7 +454,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     showToast('没有可折叠的节点');
                 }
                 // 切换按钮图标和文本
-                toggleAllBtn.querySelector('i').className = 'fa fa-plus-square-o';
+                buttonIcon.className = 'fa fa-plus-square-o';
+                buttonTextNode.nodeValue = ' 展开全部';
                 
                 // 更新状态
                 isExpanded = false;
@@ -461,7 +470,8 @@ document.addEventListener('DOMContentLoaded', function() {
                     showToast('没有可展开的节点');
                 }
                 // 切换按钮图标和文本
-                toggleAllBtn.querySelector('i').className = 'fa fa-minus-square-o';
+                buttonIcon.className = 'fa fa-minus-square-o';
+                buttonTextNode.nodeValue = ' 折叠全部';
                 
                 // 更新状态
                 isExpanded = true;
