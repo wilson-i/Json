@@ -11,5 +11,5 @@ chrome.action.onClicked.addListener((tab) => {
 
 // 扩展安装时执行
 chrome.runtime.onInstalled.addListener(() => {
-  console.log('www-json 插件已安装');
+  console.log('wilson-json 插件已安装');
 });

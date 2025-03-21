@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "www-json",
+  "name": "wilson-json",
   "version": "1.0",
   "description": "格式化JSON数据，使其更易读",
   "permissions": [
