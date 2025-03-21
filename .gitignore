@@ -9,7 +9,7 @@ yarn-error.log*
 icon-generator.html
 auto-generate-icons.html
 icon-generator-web.html
-generate-and-save-icons.js
+generate-retina-icons.js
 
 # 编辑器和IDE
 .vscode/
