@@ -4,8 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const formatBtn = document.getElementById('formatBtn');
     const minifyBtn = document.getElementById('minifyBtn');
     const toast = document.getElementById('toast');
-    const expandAllBtn = document.getElementById('expandAllBtn');
-    const collapseAllBtn = document.getElementById('collapseAllBtn');
+    const toggleAllBtn = document.getElementById('toggleAllBtn');
     
     // 检查DOM元素是否存在
     const checkElements = [
@@ -14,8 +13,7 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: 'formatBtn', element: formatBtn },
         { name: 'minifyBtn', element: minifyBtn },
         { name: 'toast', element: toast },
-        { name: 'expandAllBtn', element: expandAllBtn },
-        { name: 'collapseAllBtn', element: collapseAllBtn }
+        { name: 'toggleAllBtn', element: toggleAllBtn }
     ];
     
     let allElementsFound = true;
@@ -431,37 +429,47 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
     
-    // 展开所有节点
-    if (expandAllBtn) {
-        expandAllBtn.addEventListener('click', () => {
-            const collapsibles = document.querySelectorAll('.collapsible.collapsed');
-            if (collapsibles.length > 0) {
-                collapsibles.forEach(item => item.click());
-                showToast(`已展开 ${collapsibles.length} 个节点`);
+    // 展开/折叠切换按钮
+    if (toggleAllBtn) {
+        // 按钮的初始状态为"展开全部"
+        let isExpanded = false;
+        
+        toggleAllBtn.addEventListener('click', () => {
+            // 检查当前折叠状态，决定执行操作
+            if (isExpanded) {
+                // 当前是展开状态，执行折叠全部
+                const expandedNodes = document.querySelectorAll('.collapsible:not(.collapsed)');
+                if (expandedNodes.length > 0) {
+                    expandedNodes.forEach(item => item.click());
+                    showToast(`已折叠 ${expandedNodes.length} 个节点`);
+                } else {
+                    showToast('没有可折叠的节点');
+                }
+                // 切换按钮图标和文本
+                toggleAllBtn.querySelector('i').className = 'fa fa-plus-square-o';
+                
+                // 更新状态
+                isExpanded = false;
+                
             } else {
-                showToast('没有可展开的节点');
+                // 当前是折叠状态，执行展开全部
+                const collapsedNodes = document.querySelectorAll('.collapsible.collapsed');
+                if (collapsedNodes.length > 0) {
+                    collapsedNodes.forEach(item => item.click());
+                    showToast(`已展开 ${collapsedNodes.length} 个节点`);
+                } else {
+                    showToast('没有可展开的节点');
+                }
+                // 切换按钮图标和文本
+                toggleAllBtn.querySelector('i').className = 'fa fa-minus-square-o';
+                
+                // 更新状态
+                isExpanded = true;
             }
             
             // 添加动画效果
-            expandAllBtn.classList.add('btn-active');
-            setTimeout(() => expandAllBtn.classList.remove('btn-active'), 300);
-        });
-    }
-    
-    // 折叠所有节点
-    if (collapseAllBtn) {
-        collapseAllBtn.addEventListener('click', () => {
-            const collapsibles = document.querySelectorAll('.collapsible:not(.collapsed)');
-            if (collapsibles.length > 0) {
-                collapsibles.forEach(item => item.click());
-                showToast(`已折叠 ${collapsibles.length} 个节点`);
-            } else {
-                showToast('没有可折叠的节点');
-            }
-            
-            // 添加动画效果
-            collapseAllBtn.classList.add('btn-active');
-            setTimeout(() => collapseAllBtn.classList.remove('btn-active'), 300);
+            toggleAllBtn.classList.add('btn-active');
+            setTimeout(() => toggleAllBtn.classList.remove('btn-active'), 300);
         });
     }
     

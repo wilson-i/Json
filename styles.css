@@ -1249,3 +1249,15 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
 [data-theme="light"] .badge-type {
     color: #666;
 }
+
+/* 合并后的展开/折叠切换按钮样式 */
+#toggleAllBtn {
+    background-color: #4CAF50;
+    position: relative;
+    overflow: hidden;
+    transition: background-color 0.3s ease;
+}
+
+#toggleAllBtn:hover {
+    background-color: #45a049;
+}
