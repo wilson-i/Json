@@ -1,0 +1,34 @@
+# 依赖
+node_modules/
+package-lock.json
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# 图标生成工具
+icon-generator.html
+auto-generate-icons.html
+icon-generator-web.html
+generate-and-save-icons.js
+
+# 编辑器和IDE
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# 操作系统文件
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# 临时文件
+*.log
+*.tmp
+.tmp/
+temp/
+
+# 构建输出
+dist/
+build/ 
