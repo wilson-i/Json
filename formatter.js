@@ -3,8 +3,6 @@ document.addEventListener('DOMContentLoaded', function() {
     const jsonViewer = document.getElementById('json-viewer');
     const formatBtn = document.getElementById('formatBtn');
     const minifyBtn = document.getElementById('minifyBtn');
-    const copyBtn = document.getElementById('copyBtn');
-    const clearBtn = document.getElementById('clearBtn');
     const toast = document.getElementById('toast');
     const expandAllBtn = document.getElementById('expandAllBtn');
     const collapseAllBtn = document.getElementById('collapseAllBtn');
@@ -15,8 +13,6 @@ document.addEventListener('DOMContentLoaded', function() {
         { name: 'jsonViewer', element: jsonViewer },
         { name: 'formatBtn', element: formatBtn },
         { name: 'minifyBtn', element: minifyBtn },
-        { name: 'copyBtn', element: copyBtn },
-        { name: 'clearBtn', element: clearBtn },
         { name: 'toast', element: toast },
         { name: 'expandAllBtn', element: expandAllBtn },
         { name: 'collapseAllBtn', element: collapseAllBtn }
@@ -406,34 +402,22 @@ document.addEventListener('DOMContentLoaded', function() {
     input.addEventListener('input', debounce(processInput, 300));
     
     // 格式化按钮
-    formatBtn.addEventListener('click', function() {
-        try {
-            if (!input.value.trim()) {
-                showToast('请先输入JSON数据');
-                return;
-            }
-            
-            const json = JSON.parse(input.value);
-            input.value = JSON.stringify(json, null, 4);
+    formatBtn.addEventListener('click', () => {
+        if (input.value.trim()) {
             processInput();
             showToast('格式化成功');
             
             // 添加动画效果
             formatBtn.classList.add('btn-active');
             setTimeout(() => formatBtn.classList.remove('btn-active'), 300);
-        } catch (e) {
-            showToast('无效的JSON格式: ' + e.message);
+        } else {
+            showToast("请输入JSON数据");
         }
     });
     
     // 压缩按钮
-    minifyBtn.addEventListener('click', function() {
-        try {
-            if (!input.value.trim()) {
-                showToast('请先输入JSON数据');
-                return;
-            }
-            
+    minifyBtn.addEventListener('click', () => {
+        if (input.value.trim()) {
             const json = JSON.parse(input.value);
             input.value = JSON.stringify(json);
             processInput();
@@ -442,41 +426,14 @@ document.addEventListener('DOMContentLoaded', function() {
             // 添加动画效果
             minifyBtn.classList.add('btn-active');
             setTimeout(() => minifyBtn.classList.remove('btn-active'), 300);
-        } catch (e) {
-            showToast('无效的JSON格式: ' + e.message);
+        } else {
+            showToast("请输入JSON数据");
         }
-    });
-    
-    // 复制按钮
-    copyBtn.addEventListener('click', function() {
-        if (!input.value.trim()) {
-            showToast('没有内容可复制');
-            return;
-        }
-        
-        input.select();
-        document.execCommand('copy');
-        showToast('已复制到剪贴板');
-        
-        // 添加动画效果
-        copyBtn.classList.add('btn-active');
-        setTimeout(() => copyBtn.classList.remove('btn-active'), 300);
-    });
-    
-    // 清除按钮
-    clearBtn.addEventListener('click', function() {
-        input.value = '';
-        jsonViewer.innerHTML = '';
-        showToast('已清除');
-        
-        // 添加动画效果
-        clearBtn.classList.add('btn-active');
-        setTimeout(() => clearBtn.classList.remove('btn-active'), 300);
     });
     
     // 展开所有节点
-    if(expandAllBtn) {
-        expandAllBtn.addEventListener('click', function() {
+    if (expandAllBtn) {
+        expandAllBtn.addEventListener('click', () => {
             const collapsibles = document.querySelectorAll('.collapsible.collapsed');
             if (collapsibles.length > 0) {
                 collapsibles.forEach(item => item.click());
@@ -484,12 +441,16 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 showToast('没有可展开的节点');
             }
+            
+            // 添加动画效果
+            expandAllBtn.classList.add('btn-active');
+            setTimeout(() => expandAllBtn.classList.remove('btn-active'), 300);
         });
     }
     
     // 折叠所有节点
-    if(collapseAllBtn) {
-        collapseAllBtn.addEventListener('click', function() {
+    if (collapseAllBtn) {
+        collapseAllBtn.addEventListener('click', () => {
             const collapsibles = document.querySelectorAll('.collapsible:not(.collapsed)');
             if (collapsibles.length > 0) {
                 collapsibles.forEach(item => item.click());
@@ -497,6 +458,10 @@ document.addEventListener('DOMContentLoaded', function() {
             } else {
                 showToast('没有可折叠的节点');
             }
+            
+            // 添加动画效果
+            collapseAllBtn.classList.add('btn-active');
+            setTimeout(() => collapseAllBtn.classList.remove('btn-active'), 300);
         });
     }
     
@@ -511,8 +476,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     "语法高亮",
                     "格式化",
                     "压缩",
-                    "折叠/展开",
-                    "主题切换"
+                    "折叠/展开"
                 ],
                 "settings": {
                     "theme": "light",
