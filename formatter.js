@@ -289,7 +289,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 html += '<span class="summary-badge">' + 
                     '<span class="badge-count">' + keys.length + '</span>' + 
                     '<span class="badge-type">属性</span>' + 
-                    (keyPreview ? '<span class="badge-preview">' + keyPreview + '</span>' : '') + 
                 '</span>';
             }
             
