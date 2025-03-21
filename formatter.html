@@ -5,13 +5,79 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>W-JSON Formatter</title>
     <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css">
     <style>
-        /* 改进的样式 */
+        /* 主题变量 */
         :root {
-            --primary-color: #0078d4;
-            --bg-dark: #1e1e1e;
-            --text-light: #d4d4d4;
-            --border-color: #404040;
+            --background-color: #1e1e1e;
+            --text-color: #d4d4d4;
+            --border-color: #444;
+            --accent-color: #46a5ff;
+            --error-color: #ff5252;
+            --toolbar-bg: #2d2d2d;
+            --highlight-bg: rgba(255, 255, 255, 0.05);
+            --string-color: #ce9178;
+            --number-color: #b5cea8;
+            --boolean-color: #569cd6;
+            --null-color: #569cd6;
+            --key-color: #9cdcfe;
+            --scrollbar-track: rgba(0, 0, 0, 0.2);
+            --scrollbar-thumb: rgba(100, 100, 100, 0.5);
+            --collapsible-color: #999;
+        }
+        
+        /* 浅色主题变量 */
+        [data-theme="light"] {
+            --background-color: #ffffff;
+            --text-color: #333333;
+            --border-color: #cdcdcd;
+            --accent-color: #0078d7;
+            --error-color: #d32f2f;
+            --toolbar-bg: #f5f5f5;
+            --highlight-bg: rgba(0, 0, 0, 0.05);
+            --string-color: #a31515;
+            --number-color: #098658;
+            --boolean-color: #0000ff;
+            --null-color: #0000ff;
+            --key-color: #881280;
+            --scrollbar-track: rgba(200, 200, 200, 0.2);
+            --scrollbar-thumb: rgba(150, 150, 150, 0.5);
+            --collapsible-color: #666;
+        }
+        
+        /* 调整面板布局 */
+        .container {
+            gap: 10px;
+        }
+        
+        #viewerPanel {
+            flex: 3;
+            min-width: 0;
+            max-width: none;
+        }
+        
+        #inputPanel {
+            flex: 2;
+            min-width: 0;
+            max-width: none;
+        }
+        
+        /* 适应屏幕的响应式设计 */
+        @media (max-width: 992px) {
+            #viewerPanel, #inputPanel {
+                flex: 1;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+            }
+            
+            #viewerPanel, #inputPanel {
+                height: 50vh;
+                max-width: 100%;
+            }
         }
         
         /* 适应白天模式的额外样式 */
@@ -46,7 +112,7 @@
             font-size: 14px;
             overflow: auto;
             border-radius: 8px;
-            background-color: var(--bg-dark);
+            background-color: var(--background-color);
             border: 1px solid var(--border-color);
         }
         
@@ -54,8 +120,8 @@
             padding: 20px;
             font-family: 'Monaco', 'Consolas', monospace;
             font-size: 14px;
-            background-color: #2d2d2d;
-            color: var(--text-light);
+            background-color: var(--toolbar-bg);
+            color: var(--text-color);
             border: 1px solid var(--border-color) !important;
             border-radius: 8px;
             resize: none;
@@ -72,21 +138,21 @@
         
         /* 应用深色主题的JSON高亮颜色 */
         .json-key { 
-            color: #9cdcfe; 
+            color: var(--key-color); 
             font-weight: 500;
         }
         .json-string { 
-            color: #ce9178; 
+            color: var(--string-color); 
         }
         .json-number { 
-            color: #b5cea8; 
+            color: var(--number-color); 
         }
         .json-boolean { 
-            color: #569cd6; 
+            color: var(--boolean-color); 
             font-weight: 500;
         }
         .json-null { 
-            color: #569cd6; 
+            color: var(--null-color); 
             font-style: italic;
         }
         
@@ -104,21 +170,21 @@
         
         /* 适应白天主题的JSON高亮颜色 */
         html[data-theme="light"] .json-key { 
-            color: #0451a5; 
+            color: var(--key-color); 
             font-weight: 500;
         }
         html[data-theme="light"] .json-string { 
-            color: #a31515; 
+            color: var(--string-color); 
         }
         html[data-theme="light"] .json-number { 
-            color: #098658; 
+            color: var(--number-color); 
         }
         html[data-theme="light"] .json-boolean { 
-            color: #0000ff; 
+            color: var(--boolean-color); 
             font-weight: 500;
         }
         html[data-theme="light"] .json-null { 
-            color: #0000ff; 
+            color: var(--null-color); 
             font-style: italic;
         }
         html[data-theme="light"] .json-array,
@@ -129,7 +195,7 @@
             color: #777;
         }
         html[data-theme="light"] .collapsible {
-            color: #777;
+            color: var(--collapsible-color);
         }
 
         #controls {
@@ -144,8 +210,8 @@
 
         .btn {
             padding: 8px 16px;
-            background-color: var(--btn-bg);
-            color: var(--btn-color);
+            background-color: var(--accent-color);
+            color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
@@ -154,10 +220,39 @@
         }
 
         .btn:hover {
-            background-color: var(--btn-hover-bg);
-            color: var(--btn-hover-color);
+            background-color: var(--accent-color);
+            color: white;
             transform: translateY(-2px);
             box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        /* 改进控件样式 */
+        .tool-icon {
+            margin-right: 8px;
+        }
+        
+        /* 信息提示样式 */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 30px;
+            z-index: 2000;
+            opacity: 0;
+            transition: opacity 0.3s;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+        
+        html[data-theme="light"] .toast {
+            background-color: rgba(0, 0, 0, 0.7);
+        }
+        
+        .toast.show {
+            opacity: 1;
         }
     </style>
 </head>
@@ -172,11 +267,27 @@
     </div>
 
     <div id="controls">
-        <button id="formatBtn" class="btn">Format</button>
-        <button id="minifyBtn" class="btn">Minify</button>
-        <button id="copyBtn" class="btn">Copy</button>
-        <button id="clearBtn" class="btn">Clear</button>
+        <button id="formatBtn" class="btn">
+            <i class="fa fa-indent tool-icon"></i>格式化
+        </button>
+        <button id="minifyBtn" class="btn">
+            <i class="fa fa-compress tool-icon"></i>压缩
+        </button>
+        <button id="expandAllBtn" class="btn" title="展开所有节点">
+            <i class="fa fa-plus-square-o tool-icon"></i>展开全部
+        </button>
+        <button id="collapseAllBtn" class="btn" title="折叠所有节点">
+            <i class="fa fa-minus-square-o tool-icon"></i>折叠全部
+        </button>
+        <button id="copyBtn" class="btn">
+            <i class="fa fa-clipboard tool-icon"></i>复制
+        </button>
+        <button id="clearBtn" class="btn">
+            <i class="fa fa-trash tool-icon"></i>清除
+        </button>
     </div>
+    
+    <div id="toast" class="toast"></div>
 
     <script src="formatter.js"></script>
     <script>
@@ -187,6 +298,17 @@
             window.addEventListener('resize', () => {
                 container.style.height = 'calc(100vh - 40px)';
             });
+            
+            // 显示提示消息
+            function showToast(message) {
+                const toast = document.getElementById('toast');
+                toast.textContent = message;
+                toast.classList.add('show');
+                
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 2000);
+            }
         });
     </script>
 </body>

@@ -73,24 +73,35 @@ pre::-webkit-scrollbar-thumb:hover {
 
 /* 行高亮效果 */
 .line-content {
-    display: inline;
-    padding: 0 4px;
-    margin: -4px 0;
-    border-radius: 3px;
+    padding: 3px 0;
+    position: relative;
+    display: block;
+    transition: all 0.2s;
+    margin: 2px 0;
 }
 
-.line-content:hover > .json-key,
-.line-content:hover > .json-string,
-.line-content:hover > .json-number,
-.line-content:hover > .json-boolean,
-.line-content:hover > .json-null,
-.line-content:hover > .json-array,
-.line-content:hover > .json-object {
-    background-color: rgba(255, 255, 255, 0.05);
-    border-radius: 3px;
+.line-content:hover {
+    background-color: rgba(100, 100, 100, 0.15);
+    box-shadow: 0 0 0 1px rgba(100, 100, 100, 0.1) inset;
+    z-index: 1;
 }
 
-/* 主题变量设置 */
+html[data-theme="light"] .line-content:hover {
+    background-color: rgba(0, 0, 0, 0.06);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+}
+
+/* 防止悬停效果叠加 */
+.line-content:hover .json-key,
+.line-content:hover .json-string,
+.line-content:hover .json-number,
+.line-content:hover .json-boolean,
+.line-content:hover .json-null {
+    background-color: transparent;
+    text-shadow: none;
+}
+
+/* 改进主题变量 */
 :root {
     --bg-color: #1e1e1e;
     --text-color: #d4d4d4;
@@ -100,48 +111,63 @@ pre::-webkit-scrollbar-thumb:hover {
     --btn-color: #ccc;
     --btn-hover-bg: #444;
     --btn-hover-color: #fff;
+    --accent-color: #0078d4;
+    --accent-hover: #106ebe;
+    --panel-padding: 15px;
+    --border-radius: 10px;
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    --transition-speed: 0.3s;
 }
 
 :root[data-theme='light'] {
-    --bg-color: #f8f8f8;
+    --bg-color: #f5f5f5;
     --text-color: #333333;
     --border-color: #dddddd;
     --hover-color: #f0f0f0;
-    --btn-bg: #e0e0e0;
+    --btn-bg: #e6e6e6;
     --btn-color: #333;
     --btn-hover-bg: #d0d0d0;
     --btn-hover-color: #000;
+    --accent-color: #0078d4;
+    --accent-hover: #106ebe;
+    --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
 body {
     margin: 0;
-    padding: 20px;
+    padding: 0;
     background: var(--bg-color);
     color: var(--text-color);
     font-family: 'Monaco', 'Consolas', monospace;
-    transition: all 0.3s;
+    transition: all var(--transition-speed);
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
-/* Formatter页面特定布局 */
+/* 改进容器样式 */
 .container {
     display: flex;
-    gap: 20px;
+    flex: 1;
+    gap: 15px;
+    padding: 20px;
     height: calc(100vh - 40px);
-    min-height: 600px;
-    border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    transition: all var(--transition-speed);
 }
 
-/* 统一面板样式 */
+/* 美化面板样式 */
 .panel {
     flex: 1;
     height: 100%;
     display: flex;
     border: none;
     overflow: hidden;
-    padding: 0;
     background: transparent;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    transition: all var(--transition-speed);
 }
 
 /* 左侧面板 - 可最小化 */
@@ -152,7 +178,6 @@ body {
 
 #inputPanel {
     position: relative;
-    transition: all 0.3s ease;
     min-width: 30%;
 }
 
@@ -179,9 +204,9 @@ body {
 }
 
 #viewerPanel {
-    transition: all 0.3s ease;
     max-width: 70%;
     overflow: auto;
+    background-color: rgba(0, 0, 0, 0.03);
 }
 
 .container.has-minimized-input #viewerPanel {
@@ -200,21 +225,31 @@ body {
     margin-bottom: 10px;
 }
 
-/* 保持样式一致性 */
+/* 改进输入区域样式 */
 #input {
     width: 100%;
     height: 100%;
     margin: 0;
-    padding: 15px;
+    padding: var(--panel-padding);
     background: #2d2d2d;
     color: var(--text-color);
     border: 1px solid var(--border-color);
-    border-radius: 8px;
+    border-radius: var(--border-radius);
     font-family: 'Monaco', 'Consolas', monospace;
     font-size: 14px;
     resize: none;
     box-sizing: border-box;
     outline: none;
+    transition: border-color var(--transition-speed), box-shadow var(--transition-speed);
+}
+
+#input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+html[data-theme="light"] #input {
+    background-color: #ffffff;
 }
 
 #format {
@@ -229,116 +264,309 @@ body {
     display: none;
 }
 
+/* 优化按钮区域 */
+#controls {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 10px;
+    z-index: 1000;
+    padding: 10px 15px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    transition: all var(--transition-speed);
+}
+
+html[data-theme="light"] #controls {
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* 优化按钮样式 */
 .btn {
-    background-color: var(--btn-bg);
-    color: var(--btn-color);
+    padding: 8px 16px;
+    background-color: var(--accent-color);
+    color: white;
     border: none;
-    padding: 8px 12px;
-    margin: 0 4px;
-    border-radius: 4px;
+    border-radius: 30px;
     cursor: pointer;
     font-size: 14px;
+    font-weight: 500;
     transition: all 0.2s;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
 }
 
 .btn:hover {
-    background-color: var(--btn-hover-bg);
-    color: var(--btn-hover-color);
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
-.viewer-container {
-    background-color: #1e1e1e;
-    border-radius: 8px;
-    padding: 20px;
-    margin-top: 10px;
-}
-
-.json-viewer {
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 15px;
-    background: var(--hover-color);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    overflow: auto;
-    font-size: 14px;
-    white-space: pre;
-    font-family: 'Monaco', 'Menlo', monospace;
-    line-height: 1.6;
-    letter-spacing: 0.3px;
-    box-sizing: border-box;
-}
-
-/* 移除之前的 pre 相关样式 */
-.viewer-container pre {
-    margin: 0;
-}
-
-.array-index {
-    color: #888;
-    font-size: 0.9em;
-    margin-right: 4px;
-}
-
-.collapsible {
-    display: inline-block;
-    width: 20px;
-    height: 20px;
-    text-align: center;
-    cursor: pointer;
-    color: #888;
-    font-size: 10px;
-    vertical-align: middle;
-    user-select: none;
-}
-
-.collapsible-content {
-    display: block;
+.btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
 }
 
 /* 美化滚动条 */
 ::-webkit-scrollbar {
-    width: 10px;
-    height: 10px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #2d2d2d;
-    border-radius: 6px;
+    background: transparent;
+    border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
-    background: #555;
-    border-radius: 6px;
+    background: rgba(100, 100, 100, 0.5);
+    border-radius: 10px;
+    transition: background 0.3s;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: #666;
+    background: rgba(100, 100, 100, 0.8);
 }
 
-/* JSON语法高亮 */
+html[data-theme="light"] ::-webkit-scrollbar-thumb {
+    background: rgba(150, 150, 150, 0.5);
+}
+
+html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
+    background: rgba(150, 150, 150, 0.8);
+}
+
+/* 改进JSON高亮和交互 */
 .json-key { 
     color: #9cdcfe; 
     font-weight: 500;
     margin-right: 0;
+    transition: all 0.2s;
 }
-.json-string { color: #ce9178; }
-.json-number { color: #b5cea8; }
+
+.json-string { 
+    color: #ce9178; 
+    transition: all 0.2s;
+}
+
+.json-number { 
+    color: #b5cea8; 
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
 .json-boolean { 
     color: #569cd6; 
     font-weight: 500;
+    transition: all 0.2s;
 }
+
 .json-null { 
     color: #569cd6; 
     font-style: italic;
+    transition: all 0.2s;
 }
 
-/* 添加高亮效果 */
+/* 移除可能导致闪烁的悬停效果 */
 .json-viewer span:hover {
-    background-color: rgba(86, 156, 214, 0.1);
-    border-radius: 2px;
-    line-height: 1.5;
+    background-color: transparent;
+    border-radius: 0;
+    padding: 0;
+    margin: 0;
+}
+
+/* 改进折叠控件 */
+.collapsible {
+    cursor: pointer;
+    padding: 0 4px;
+    margin-right: 2px;
+    font-size: 12px;
+    color: var(--collapsible-color);
+    transition: all 0.2s ease;
+    border-radius: 3px;
+    user-select: none;
+    pointer-events: auto;
+    z-index: 2;
+    position: relative;
+}
+
+.collapsible:hover {
+    color: var(--accent-color);
+    background-color: rgba(255, 255, 255, 0.05);
+}
+
+.collapsible.collapsed {
+    color: var(--accent-color);
+    font-weight: bold;
+}
+
+.collapsible-content {
+    transition: all 0.3s ease;
+}
+
+.bracket-container {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+}
+
+.summary-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #bbb;
+    background-color: rgba(80, 80, 80, 0.2);
+    padding: 1px 6px;
+    margin: 0 4px;
+    border-radius: 10px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+}
+
+[data-theme="light"] .summary-badge {
+    color: #666;
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+.collapsed ~ .bracket-container .summary-badge,
+.collapsible.collapsed + .bracket-container .summary-badge {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 改进折叠状态的视觉效果 */
+.collapsible.collapsed + .bracket-container {
+    position: relative;
+    background-color: rgba(80, 80, 80, 0.1);
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    border: 1px dashed rgba(150, 150, 150, 0.3);
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+html[data-theme="light"] .collapsible.collapsed + .bracket-container {
+    background-color: rgba(0, 0, 0, 0.05);
+    border: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+/* 完全禁用过渡动画以避免闪烁 */
+.contains-collapsed *,
+.bracket-container.collapsed-bracket * {
+    transition: none !important;
+    animation: none !important;
+}
+
+/* 提高折叠状态下的可读性 */
+.collapsible.collapsed + .bracket-container .json-array,
+.collapsible.collapsed + .bracket-container .json-object {
+    color: var(--accent-color) !important;
+    opacity: 0.8;
+}
+
+/* 折叠状态下的括号样式增强 */
+.collapsible.collapsed + .json-array,
+.collapsible.collapsed + .json-object {
+    position: relative;
+    background-color: rgba(80, 80, 80, 0.1);
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    pointer-events: none;
+}
+
+html[data-theme="light"] .collapsible.collapsed + .json-array,
+html[data-theme="light"] .collapsible.collapsed + .json-object {
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 显示折叠内容的提示 */
+.collapsible.collapsed + .json-array::after,
+.collapsible.collapsed + .json-object::after {
+    content: "...";
+    color: #888;
+    font-style: italic;
+    margin: 0 2px;
+    position: relative;
+}
+
+html[data-theme="light"] .collapsible.collapsed + .json-array::after,
+html[data-theme="light"] .collapsible.collapsed + .json-object::after {
+    color: #666;
+}
+
+/* 提高折叠图标的对比度 */
+.collapsible.collapsed {
+    color: #bbb;
+}
+
+html[data-theme="light"] .collapsible.collapsed {
+    color: #555;
+    background-color: rgba(0, 0, 0, 0.08);
+}
+
+html[data-theme="light"] .collapsible:hover {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+/* 折叠/展开时的动画优化 */
+.collapsible, .json-array, .json-object {
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+/* 折叠内容样式优化 */
+.collapsible-content {
+    transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
+    padding-left: 24px;
+    margin-left: 2px;
+    border-left: 1px dashed rgba(150, 150, 150, 0.2);
+    display: block; /* 默认展开 */
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 折叠状态的样式 */
+.collapsible-content.collapsed {
+    opacity: 0;
+    transform: translateY(-10px);
+    display: none;
+}
+
+.json-array, .json-object {
+    transition: color 0.2s ease;
+}
+
+/* 鼠标悬停在折叠图标上时高亮对应的括号 */
+.collapsible:hover + .json-array,
+.collapsible:hover + .json-object {
+    color: var(--accent-color);
+    text-shadow: 0 0 2px rgba(0, 120, 212, 0.2);
+}
+
+/* 提高行内对象的可见性 */
+.line-content {
+    padding: 4px 0 4px 0;
+    position: relative;
+    display: block;
+    transition: all 0.2s;
+    margin: 2px 0;
+    border-radius: 6px;
 }
 
 /* 最小化按钮样式 */
@@ -352,18 +580,299 @@ body {
 }
 
 /* 改进JSON显示样式 */
-.array-item, .object-item {
-    margin: 4px 0;
-    padding-left: 20px;
+.json-viewer {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: var(--panel-padding);
+    background: var(--hover-color);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    overflow: auto;
+    font-size: 14px;
+    white-space: pre;
+    font-family: 'Monaco', 'Menlo', monospace;
+    line-height: 1.6;
+    letter-spacing: 0.3px;
+    box-sizing: border-box;
+    transition: all var(--transition-speed);
 }
 
-/* 在小屏幕上保持合理的尺寸 */
+/* 优化折叠视图 */
+.collapsible-content {
+    transition: all 0.3s ease;
+    padding-left: 20px;
+    display: block; /* 默认展开 */
+}
+
+/* 优化数组索引显示 */
+.array-index {
+    color: #888;
+    font-size: 12px;
+    opacity: 0.8;
+    margin-right: 4px;
+    user-select: none;
+}
+
+/* 更明显的JSON语法高亮 */
+.json-key { 
+    color: #9cdcfe; 
+    font-weight: 500;
+    margin-right: 0;
+    transition: all 0.2s;
+}
+
+.json-string { 
+    color: #ce9178; 
+    transition: all 0.2s;
+}
+
+.json-number { 
+    color: #b5cea8; 
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.json-boolean { 
+    color: #569cd6; 
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.json-null { 
+    color: #569cd6; 
+    font-style: italic;
+    transition: all 0.2s;
+}
+
+.json-array,
+.json-object {
+    color: #808080;
+    opacity: 0.9;
+}
+
+/* 更新白天模式高亮颜色 */
+html[data-theme="light"] .json-key { 
+    color: #0451a5; 
+    font-weight: 500;
+}
+
+html[data-theme="light"] .json-string { 
+    color: #a31515; 
+}
+
+html[data-theme="light"] .json-number { 
+    color: #098658; 
+    font-weight: 500;
+}
+
+/* 折叠内容过渡动画 */
+.collapsible-content {
+    transition: all 0.3s ease;
+}
+
+/* 在小屏幕上优化布局 */
 @media (max-width: 768px) {
-    #viewerPanel {
-        max-width: 60%;
+    .container {
+        flex-direction: column;
+        padding: 10px;
     }
     
-    #inputPanel {
-        min-width: 40%;
+    #viewerPanel, #inputPanel {
+        max-width: 100%;
+        min-width: 100%;
+        height: 50%;
     }
+    
+    #controls {
+        bottom: 10px;
+        padding: 8px 12px;
+    }
+    
+    .btn {
+        min-width: 60px;
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}
+
+/* 添加按钮动画效果 */
+.btn-active {
+    transform: scale(0.95) !important;
+    background-color: var(--accent-hover) !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* 优化JSON错误显示 */
+.json-error {
+    color: #e53935;
+    padding: 10px 15px;
+    background-color: rgba(229, 57, 53, 0.1);
+    border-left: 3px solid #e53935;
+    border-radius: 4px;
+    margin: 10px 0;
+    display: block;
+}
+
+/* 折叠状态下的项目显示更多信息 */
+.collapsible.collapsed + .json-array + span,
+.collapsible.collapsed + .json-object + span {
+    position: relative;
+    opacity: 0.7;
+    font-size: 12px;
+    font-style: italic;
+    color: #999;
+    margin-left: 5px;
+    background-color: rgba(100, 100, 100, 0.1);
+    padding: 1px 5px;
+    border-radius: 10px;
+}
+
+html[data-theme="light"] .collapsible.collapsed + .json-array + span,
+html[data-theme="light"] .collapsible.collapsed + .json-object + span {
+    color: #666;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+/* 提高JSON对象和数组的可见性 */
+.json-array, .json-object {
+    position: relative;
+    transition: all 0.2s ease;
+}
+
+/* 鼠标悬停效果增强 */
+.line-content:hover .json-key {
+    color: #00aaff;
+    text-shadow: 0 0 1px rgba(0, 170, 255, 0.3);
+}
+
+html[data-theme="light"] .line-content:hover .json-key {
+    color: #0066cc;
+    text-shadow: 0 0 1px rgba(0, 102, 204, 0.2);
+}
+
+/* 摘要标签样式 */
+.summary-badge {
+    display: inline-block;
+    font-size: 11px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #bbb;
+    background-color: rgba(80, 80, 80, 0.2);
+    padding: 1px 6px;
+    margin: 0 4px;
+    border-radius: 10px;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.3s ease;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    user-select: none;
+}
+
+/* 折叠状态下显示摘要 */
+.collapsible.collapsed + .bracket-container .summary-badge {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* 适应白天主题的摘要样式 */
+html[data-theme="light"] .summary-badge {
+    color: #666;
+    background-color: rgba(0, 0, 0, 0.06);
+}
+
+/* 改进折叠后的显示 */
+.collapsible.collapsed {
+    background-color: rgba(100, 100, 100, 0.25);
+    color: white;
+}
+
+html[data-theme="light"] .collapsible.collapsed {
+    background-color: rgba(0, 0, 0, 0.12);
+    color: #444;
+}
+
+/* 折叠时高亮对象和数组的括号 */
+.collapsible.collapsed + .bracket-container .json-array,
+.collapsible.collapsed + .bracket-container .json-object {
+    font-weight: bold;
+    pointer-events: none;
+}
+
+/* 进一步修复鼠标悬停闪烁问题 */
+/* 阻止折叠容器内元素触发鼠标事件 */
+.collapsible.collapsed + .bracket-container * {
+    pointer-events: none;
+}
+
+/* 确保collapsible元素始终可以接收鼠标事件 */
+.collapsible {
+    pointer-events: auto !important;
+}
+
+/* 稳定摘要标签的显示 */
+.summary-badge {
+    pointer-events: none;
+}
+
+/* 使用更强力的选择器优先级解决鼠标闪烁问题 */
+.line-content.contains-collapsed {
+    pointer-events: none !important;
+}
+
+/* 允许折叠按钮接收事件 */
+.line-content.contains-collapsed .collapsible {
+    pointer-events: auto !important;
+}
+
+/* 避免折叠展开指示器和内容区域闪烁 */
+.bracket-container.collapsed-bracket {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+.bracket-container.collapsed-bracket * {
+    pointer-events: none !important;
+    cursor: default !important;
+}
+
+/* 确保折叠状态下整个区域不接收鼠标事件，但显示正常指针 */
+.contains-collapsed,
+.contains-collapsed *:not(.collapsible) {
+    cursor: default !important;
+}
+
+/* 禁用折叠状态下所有hover效果 */
+.line-content.contains-collapsed:hover {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* 折叠按钮的指针样式 */
+.collapsible {
+    cursor: pointer !important;
+}
+
+/* 确保折叠后的视觉效果不受鼠标悬停影响 */
+.collapsible.collapsed + .bracket-container {
+    position: relative;
+    background-color: rgba(80, 80, 80, 0.1);
+    border-radius: 3px;
+    padding: 2px 4px;
+    margin: 0 2px;
+    border: 1px dashed rgba(150, 150, 150, 0.3);
+}
+
+.collapsible.collapsed + .bracket-container:after {
+    content: "...";
+    color: #888;
+    font-style: italic;
+    margin: 0 2px;
+    position: relative;
+}
+
+html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
+    color: #666;
 }
