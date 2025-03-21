@@ -168,25 +168,14 @@ body {
 
 /* 最小化时的样式 - 完全重写 */
 .container.has-minimized-input {
-    display: block !important;
-    position: relative !important;
+    display: flex !important;
 }
 
 #inputPanel.minimized {
-    position: fixed !important;
-    right: 20px !important;
-    top: 20px !important;
-    width: 30px !important;
-    height: 30px !important;
-    max-width: 30px !important;
-    min-width: 30px !important;
-    flex: none !important;
-    overflow: hidden !important;
-    background: transparent !important;
-    border: none !important;
-    z-index: 900 !important;
-    padding: 0 !important;
-    margin: 0 !important;
+    display: flex !important;
+    flex: 1 !important;
+    min-width: 30% !important;
+    max-width: none !important;
 }
 
 #viewerPanel {
@@ -354,30 +343,12 @@ body {
 
 /* 最小化按钮样式 */
 .minimize-btn {
-    position: absolute;
-    right: 10px;
-    top: 10px;
-    background-color: transparent;
-    color: var(--text-color);
-    border: none;
-    cursor: pointer;
-    z-index: 102;
-    font-size: 18px;
-    width: 28px;
-    height: 28px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 4px;
+    display: none;
 }
 
-.minimize-btn:hover {
-    background-color: var(--hover-color);
-}
-
-/* 最小化时输入区域完全隐藏 */
+/* 最小化时输入区域不再隐藏 */
 #input.minimized {
-    display: none !important;
+    display: block !important;
 }
 
 /* 改进JSON显示样式 */

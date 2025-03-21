@@ -70,76 +70,6 @@
             padding: 0;
         }
         
-        /* 改进的按钮样式 */
-        .minimize-btn {
-            position: absolute !important;
-            top: 15px;
-            right: 15px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            display: flex !important;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 9999 !important;
-            font-size: 18px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
-        }
-        
-        .minimize-btn:hover {
-            background: #106ebe;
-            transform: scale(1.05);
-        }
-        
-        #expandBtn {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            background: var(--primary-color);
-            color: white;
-            border: none;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            font-size: 20px;
-            box-shadow: 0 3px 6px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
-        }
-        
-        #expandBtn:hover {
-            background: #106ebe;
-            transform: scale(1.05);
-        }
-        
-        /* 最小化模式的样式 */
-        .minimized-mode #viewerPanel {
-            width: 100% !important;
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            right: 0 !important;
-            bottom: 0 !important;
-            padding: 20px !important;
-        }
-        
-        .minimized-mode #inputPanel {
-            display: none !important;
-        }
-        
-        .minimized-mode #expandBtn {
-            display: flex !important;
-        }
-        
         /* 应用深色主题的JSON高亮颜色 */
         .json-key { 
             color: #9cdcfe; 
@@ -237,11 +167,9 @@
             <div id="json-viewer" class="json-viewer"></div>
         </div>
         <div class="panel" id="inputPanel">
-            <button class="minimize-btn" id="minimizeBtn" onclick="minimizePanel()">−</button>
             <textarea id="input" placeholder="在这里粘贴你的JSON数据..."></textarea>
         </div>
     </div>
-    <button id="expandBtn" onclick="expandPanel()">+</button>
 
     <div id="controls">
         <button id="formatBtn" class="btn">Format</button>
@@ -260,33 +188,6 @@
                 container.style.height = 'calc(100vh - 40px)';
             });
         });
-
-        // 全局函数
-        function minimizePanel() {
-            console.log('最小化函数被调用');
-            document.body.classList.add('minimized-mode');
-            document.getElementById('inputPanel').style.display = 'none';
-            document.getElementById('viewerPanel').style.width = '100%';
-            document.getElementById('viewerPanel').style.position = 'absolute';
-            document.getElementById('viewerPanel').style.left = '0';
-            document.getElementById('viewerPanel').style.top = '0';
-            document.getElementById('viewerPanel').style.right = '0';
-            document.getElementById('viewerPanel').style.bottom = '0';
-            document.getElementById('expandBtn').style.display = 'flex';
-        }
-        
-        function expandPanel() {
-            console.log('展开函数被调用');
-            document.body.classList.remove('minimized-mode');
-            document.getElementById('inputPanel').style.display = '';
-            document.getElementById('viewerPanel').style.width = '';
-            document.getElementById('viewerPanel').style.position = '';
-            document.getElementById('viewerPanel').style.left = '';
-            document.getElementById('viewerPanel').style.top = '';
-            document.getElementById('viewerPanel').style.right = '';
-            document.getElementById('viewerPanel').style.bottom = '';
-            document.getElementById('expandBtn').style.display = 'none';
-        }
     </script>
 </body>
 </html>
