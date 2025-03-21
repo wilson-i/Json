@@ -434,13 +434,23 @@ document.addEventListener('DOMContentLoaded', function() {
         // 按钮的初始状态为"展开全部"
         let isExpanded = false;
         
-        // 初始化按钮文本
+        // 初始化按钮图标
         const buttonIcon = toggleAllBtn.querySelector('i');
-        const buttonTextNode = toggleAllBtn.childNodes[1]; // 获取文本节点
         
-        // 设置初始状态的文本
+        // 设置初始状态的图标和文本
         buttonIcon.className = 'fa fa-plus-square-o';
-        buttonTextNode.nodeValue = ' 展开全部';
+        
+        // 确保按钮文本正确设置
+        // 移除按钮中所有文本节点，重新创建一个
+        let textNode = null;
+        toggleAllBtn.childNodes.forEach(node => {
+            if (node.nodeType === 3) { // 文本节点
+                node.remove();
+            }
+        });
+        // 添加新的文本节点
+        textNode = document.createTextNode(' 展开全部');
+        toggleAllBtn.appendChild(textNode);
         
         toggleAllBtn.addEventListener('click', () => {
             // 检查当前折叠状态，决定执行操作
@@ -455,7 +465,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // 切换按钮图标和文本
                 buttonIcon.className = 'fa fa-plus-square-o';
-                buttonTextNode.nodeValue = ' 展开全部';
+                
+                // 移除所有文本节点，重新创建
+                toggleAllBtn.childNodes.forEach(node => {
+                    if (node.nodeType === 3) { // 文本节点
+                        node.remove();
+                    }
+                });
+                toggleAllBtn.appendChild(document.createTextNode(' 展开全部'));
                 
                 // 更新按钮样式
                 toggleAllBtn.classList.remove('expanded');
@@ -474,7 +491,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
                 // 切换按钮图标和文本
                 buttonIcon.className = 'fa fa-minus-square-o';
-                buttonTextNode.nodeValue = ' 折叠全部';
+                
+                // 移除所有文本节点，重新创建
+                toggleAllBtn.childNodes.forEach(node => {
+                    if (node.nodeType === 3) { // 文本节点
+                        node.remove();
+                    }
+                });
+                toggleAllBtn.appendChild(document.createTextNode(' 折叠全部'));
                 
                 // 更新按钮样式
                 toggleAllBtn.classList.add('expanded');
