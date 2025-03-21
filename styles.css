@@ -504,6 +504,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     line-height: 1.3;
     position: relative;
     top: -1px;
+    pointer-events: none !important;
 }
 
 [data-theme="light"] .summary-badge {
@@ -530,11 +531,6 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 [data-theme="light"] .collapsible.collapsed + .json-object + .summary-badge {
     background-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.08);
     border-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.15);
-}
-
-/* 确保summary-badge不会被其他元素的pointer-events规则影响 */
-.summary-badge {
-    pointer-events: none !important;
 }
 
 /* 简介内部样式 */
@@ -773,38 +769,6 @@ html[data-theme="light"] .line-content:hover .json-key {
     text-shadow: 0 0 1px rgba(0, 102, 204, 0.2);
 }
 
-/* 摘要标签样式 */
-.summary-badge {
-    display: inline-block;
-    font-size: 11px;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color: #bbb;
-    background-color: rgba(80, 80, 80, 0.2);
-    padding: 1px 6px;
-    margin: 0 4px;
-    border-radius: 10px;
-    opacity: 0;
-    transform: translateY(10px);
-    transition: all 0.3s ease;
-    max-width: 300px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    user-select: none;
-}
-
-/* 折叠状态下显示摘要 */
-.collapsible.collapsed + .bracket-container .summary-badge {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-/* 适应白天主题的摘要样式 */
-html[data-theme="light"] .summary-badge {
-    color: #666;
-    background-color: rgba(0, 0, 0, 0.06);
-}
-
 /* 改进折叠后的显示 */
 .collapsible.collapsed {
     background-color: rgba(100, 100, 100, 0.25);
@@ -835,9 +799,9 @@ html[data-theme="light"] .collapsible.collapsed {
 }
 
 /* 稳定摘要标签的显示 */
-.summary-badge {
+/* .summary-badge {
     pointer-events: none;
-}
+} */
 
 /* 使用更强力的选择器优先级解决鼠标闪烁问题 */
 .line-content.contains-collapsed {
@@ -920,12 +884,12 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
 }
 
 /* 修正summary-badge的位置 */
-.summary-badge {
+/* .summary-badge {
     margin-left: 4px;
     margin-right: 0;
     font-size: 11px;
     color: #999;
-}
+} */
 
 /* 阻止鼠标事件穿透到底层元素 */
 .json-node * {
@@ -1132,6 +1096,7 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
     line-height: 1.3;
     position: relative;
     top: -1px;
+    pointer-events: none !important;
 }
 
 [data-theme="light"] .summary-badge {
