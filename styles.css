@@ -1261,3 +1261,11 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
 #toggleAllBtn:hover {
     background-color: #45a049;
 }
+
+#toggleAllBtn.expanded {
+    background-color: #9C27B0;
+}
+
+#toggleAllBtn.expanded:hover {
+    background-color: #7B1FA2;
+}

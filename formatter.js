@@ -457,6 +457,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 buttonIcon.className = 'fa fa-plus-square-o';
                 buttonTextNode.nodeValue = ' 展开全部';
                 
+                // 更新按钮样式
+                toggleAllBtn.classList.remove('expanded');
+                
                 // 更新状态
                 isExpanded = false;
                 
@@ -472,6 +475,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 切换按钮图标和文本
                 buttonIcon.className = 'fa fa-minus-square-o';
                 buttonTextNode.nodeValue = ' 折叠全部';
+                
+                // 更新按钮样式
+                toggleAllBtn.classList.add('expanded');
                 
                 // 更新状态
                 isExpanded = true;
