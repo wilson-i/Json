@@ -88,12 +88,27 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // 折叠/展开功能
     function setupCollapsible(element) {
-        if (element.classList.contains('collapsible')) {
-            // 找到相邻元素
-            let nextElement = element.nextElementSibling; // 应该是json-array或json-object
-            let summaryElement = nextElement.nextElementSibling; // 应该是summary-badge
-            let contentElement = summaryElement.nextElementSibling; // 应该是collapsible-content
+        if (!element || !element.classList.contains('collapsible')) {
+            return;
+        }
+        
+        try {
+            // 找到包装器元素
+            const wrapper = element.closest('.collapsible-wrapper');
+            if (!wrapper) {
+                console.error('找不到collapsible-wrapper元素', element);
+                return;
+            }
             
+            // 查找json-node父元素和collapsible-content兄弟元素
+            const parentNode = wrapper.closest('.json-node');
+            if (!parentNode) {
+                console.error('找不到json-node父元素', element);
+                return;
+            }
+            
+            // collapsible-content应该是json-node的下一个兄弟元素
+            const contentElement = parentNode.nextElementSibling;
             if (!contentElement || !contentElement.classList.contains('collapsible-content')) {
                 console.error('无法找到折叠内容元素', element);
                 return;
@@ -101,22 +116,46 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 设置初始状态为展开
             element.textContent = '▼';
+            element.classList.remove('collapsed');
             contentElement.style.display = 'block';
             
-            // 添加点击事件监听
-            element.addEventListener('click', function() {
+            // 使用包装器处理点击事件，增大可点击区域
+            wrapper.onclick = function(e) {
+                // 阻止事件冒泡，防止触发父元素事件
+                e.stopPropagation();
+                e.preventDefault();
+                
+                // 防止快速连续点击
+                if (this.dataset.processing === 'true') {
+                    return;
+                }
+                
+                this.dataset.processing = 'true';
+                
                 if (contentElement.style.display === 'none') {
                     // 展开
-                    this.textContent = '▼';
-                    this.classList.remove('collapsed');
+                    element.textContent = '▼';
+                    element.classList.remove('collapsed');
                     contentElement.style.display = 'block';
+                    
+                    // 添加极短延迟，避免抖动
+                    setTimeout(() => {
+                        this.dataset.processing = 'false';
+                    }, 100);
                 } else {
                     // 折叠
-                    this.textContent = '▶';
-                    this.classList.add('collapsed');
+                    element.textContent = '▶';
+                    element.classList.add('collapsed');
                     contentElement.style.display = 'none';
+                    
+                    // 添加极短延迟，避免抖动
+                    setTimeout(() => {
+                        this.dataset.processing = 'false';
+                    }, 100);
                 }
-            });
+            };
+        } catch (err) {
+            console.error('设置折叠功能时出错:', err);
         }
     }
     
@@ -173,10 +212,18 @@ document.addEventListener('DOMContentLoaded', function() {
                 return '<span class="json-array">[]</span>';
             }
             
-            // 简化HTML结构，解决层级嵌套问题
-            html += '<span class="collapsible">▼</span>';
+            // 改进HTML结构，增加更大的点击区域
+            html += '<span class="json-node">';
+            // 包裹折叠按钮，提供更大的可点击区域
+            html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-array">[</span>';
-            html += '<span class="summary-badge">' + node.length + '项</span>';
+            
+            if (node.length > 0) {
+                html += '<span class="summary-badge">' + node.length + '项</span>';
+            }
+            
+            html += '</span>';  // 结束json-node
+            
             html += '<div class="collapsible-content">';
             
             node.forEach((item, index) => {
@@ -206,10 +253,18 @@ document.addEventListener('DOMContentLoaded', function() {
             // 提取最重要的键（优先显示常见重要字段如id、name等）
             const keyPreview = findImportantKeys(keys, node);
             
-            // 简化HTML结构
-            html += '<span class="collapsible">▼</span>';
+            // 改进HTML结构，增加更大的点击区域
+            html += '<span class="json-node">';
+            // 包裹折叠按钮，提供更大的可点击区域
+            html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-object">{</span>';
-            html += '<span class="summary-badge">' + keys.length + '属性 ' + keyPreview + '</span>';
+            
+            if (keys.length > 0) {
+                html += '<span class="summary-badge">' + keys.length + '属性 ' + keyPreview + '</span>';
+            }
+            
+            html += '</span>';  // 结束json-node
+            
             html += '<div class="collapsible-content">';
             
             keys.forEach((key, index) => {

@@ -387,20 +387,37 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 .collapsible {
     cursor: pointer;
     padding: 0 4px;
-    margin-right: 2px;
+    margin-right: 4px;
     font-size: 12px;
     color: var(--collapsible-color);
+    opacity: 0.8;
     transition: all 0.2s ease;
     border-radius: 3px;
     user-select: none;
-    pointer-events: auto;
-    z-index: 2;
     position: relative;
+    z-index: 10;
+    min-width: 20px;
+    min-height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.collapsible::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    z-index: -1;
 }
 
 .collapsible:hover {
     color: var(--accent-color);
-    background-color: rgba(255, 255, 255, 0.05);
+    opacity: 1;
+    transform: none !important;
+    box-shadow: none !important;
 }
 
 .collapsible.collapsed {
@@ -408,8 +425,52 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     font-weight: bold;
 }
 
+/* 冻结指针事件，防止鼠标抖动 */
+.json-viewer {
+    position: relative;
+    isolation: isolate;
+}
+
+/* 防止hover状态变化导致的鼠标闪烁 */
+.json-viewer *:hover {
+    /* 移除任何可能导致hover状态频繁变化的效果 */
+    transition: none !important;
+    animation: none !important;
+}
+
+/* 清除折叠元素周围的pointer-events干扰 */
+.collapsible + .json-array,
+.collapsible + .json-object,
+.summary-badge {
+    pointer-events: none;
+}
+
+/* 解决嵌套内容的鼠标事件问题 */
 .collapsible-content {
-    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1;
+}
+
+/* 彻底解决鼠标指针闪烁问题 */
+.json-viewer * {
+    pointer-events: auto;
+}
+
+/* 使用更高的层级确保折叠按钮始终可点击 */
+.collapsible {
+    pointer-events: auto !important;
+    z-index: 10 !important;
+}
+
+/* 禁用可能导致闪烁的悬停效果 */
+.line-content:hover .json-key,
+.line-content:hover .json-string, 
+.line-content:hover .json-number,
+.line-content:hover .json-boolean,
+.line-content:hover .json-null {
+    /* 移除任何可能导致布局变化的效果 */
+    text-shadow: none !important;
+    transform: none !important;
 }
 
 .bracket-container {
@@ -875,4 +936,140 @@ html[data-theme="light"] .collapsible.collapsed {
 
 html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
     color: #666;
+}
+
+/* 为json-node添加样式 */
+.json-node {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    isolation: isolate;
+    margin-right: 2px;
+}
+
+/* 确保json-node中的所有元素正确对齐 */
+.json-node .collapsible,
+.json-node .json-array,
+.json-node .json-object,
+.json-node .summary-badge {
+    display: inline-block;
+    vertical-align: middle;
+}
+
+/* 修正summary-badge的位置 */
+.summary-badge {
+    margin-left: 4px;
+    margin-right: 0;
+    font-size: 11px;
+    color: #999;
+}
+
+/* 阻止鼠标事件穿透到底层元素 */
+.json-node * {
+    pointer-events: none;
+}
+.json-node .collapsible {
+    pointer-events: auto;
+}
+
+/* 确保折叠按钮样式一致 */
+.collapsible {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    line-height: 16px;
+    text-align: center;
+    font-size: 12px;
+    margin-right: 2px;
+    vertical-align: middle;
+}
+
+/* 强制所有相邻元素保持固定位置，不受hover影响 */
+.json-node, .json-key, .json-string, .json-number, .json-boolean, .json-null, .json-array, .json-object {
+    position: relative;
+    z-index: 1;
+    transition: none;
+}
+
+/* 彻底阻断除折叠按钮外所有元素的hover效果 */
+.json-viewer *:not(.collapsible):hover {
+    background: transparent !important;
+    transform: none !important;
+    text-shadow: none !important;
+    transition: none !important;
+}
+
+/* 完全禁用可能导致布局重排的属性 */
+.line-content:hover .json-key,
+.line-content:hover .json-string,
+.line-content:hover .json-number,
+.line-content:hover .json-boolean,
+.line-content:hover .json-null,
+.line-content:hover .collapsible {
+    /* 禁用所有可能引起抖动的效果 */
+    text-shadow: none !important;
+    transform: none !important;
+    background: none !important;
+    box-shadow: none !important;
+}
+
+/* 为折叠按钮添加包装器，扩大点击区域 */
+.collapsible-wrapper {
+    position: relative;
+    display: inline-block;
+    padding: 5px;
+    margin: -5px;
+    cursor: pointer;
+}
+
+/* 确保包装器的子元素不影响鼠标事件 */
+.collapsible-wrapper * {
+    pointer-events: none;
+}
+
+/* 折叠按钮本身 */
+.collapsible {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    font-size: 12px;
+    color: var(--collapsible-color);
+    opacity: 0.8;
+    transition: color 0.2s ease;
+    user-select: none;
+    z-index: 10;
+    line-height: 1;
+}
+
+/* 取消所有可能引起布局变化的hover效果 */
+.collapsible-wrapper:hover .collapsible {
+    color: var(--accent-color);
+    opacity: 1;
+}
+
+/* 防止hover状态变化导致的鼠标闪烁 */
+.json-viewer *:hover {
+    /* 移除任何可能导致hover状态频繁变化的效果 */
+    transition: none !important;
+    animation: none !important;
+    transform: none !important;
+}
+
+/* 解决鼠标事件穿透问题 */
+.json-node span:not(.collapsible-wrapper) {
+    pointer-events: none;
+}
+
+/* 确保包装器能接收事件 */
+.collapsible-wrapper {
+    pointer-events: auto !important;
+}
+
+/* 额外的间距，防止按钮与其他元素过于接近 */
+.json-array, .json-object {
+    margin-left: 2px;
 }
