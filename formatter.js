@@ -125,9 +125,9 @@ document.addEventListener('DOMContentLoaded', function() {
             element.classList.remove('collapsed');
             contentElement.style.display = 'block';
             
-            // 确保简介内容初始状态是显示的
+            // 确保简介内容初始状态是隐藏的（因为默认展开）
             if (summaryBadge) {
-                summaryBadge.style.display = 'inline';
+                summaryBadge.style.display = 'none';
             }
             
             // 使用包装器处理点击事件，增大可点击区域
@@ -149,9 +149,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.classList.remove('collapsed');
                     contentElement.style.display = 'block';
                     
-                    // 展开时显示简介内容
+                    // 展开时隐藏简介内容
                     if (summaryBadge) {
-                        summaryBadge.style.display = 'inline';
+                        summaryBadge.style.display = 'none';
                     }
                     
                     // 添加极短延迟，避免抖动
@@ -164,9 +164,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     element.classList.add('collapsed');
                     contentElement.style.display = 'none';
                     
-                    // 折叠时确保简介内容显示
+                    // 折叠时显示简介内容
                     if (summaryBadge) {
-                        summaryBadge.style.display = 'inline';
+                        summaryBadge.style.display = 'inline-flex';
                     }
                     
                     // 添加极短延迟，避免抖动
@@ -239,7 +239,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-array">[</span>';
             
-            // 添加简介内容，确保在折叠状态下可见
+            // 添加简介内容，初始隐藏，折叠时显示
             if (node.length > 0) {
                 html += '<span class="summary-badge">' + 
                     '<span class="badge-count">' + node.length + '</span>' + 
@@ -284,7 +284,7 @@ document.addEventListener('DOMContentLoaded', function() {
             html += '<span class="collapsible-wrapper"><span class="collapsible">▼</span></span>';
             html += '<span class="json-object">{</span>';
             
-            // 添加简介内容，确保在折叠状态下可见
+            // 添加简介内容，初始隐藏，折叠时显示
             if (keys.length > 0) {
                 html += '<span class="summary-badge">' + 
                     '<span class="badge-count">' + keys.length + '</span>' + 

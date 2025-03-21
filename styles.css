@@ -482,11 +482,8 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 
 /* 优化简介样式，使其更加美观 */
 .summary-badge {
-    display: inline-flex;
-    align-items: center;
-    flex-wrap: nowrap;
-    vertical-align: middle;
-    margin-left: 8px;
+    display: none;
+    margin-left: 4px;
     margin-right: 4px;
     font-size: 11px;
     background-color: rgba(70, 70, 70, 0.15);
@@ -504,7 +501,7 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
     letter-spacing: 0.3px;
     border: 1px solid rgba(100, 100, 100, 0.1);
     position: relative;
-    top: -1px;
+    vertical-align: middle;
 }
 
 [data-theme="light"] .summary-badge {
@@ -516,6 +513,8 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 /* 调整简介在折叠状态下的样式 */
 .collapsible.collapsed ~ .summary-badge,
 .json-node:has(.collapsible.collapsed) .summary-badge {
+    display: inline-flex;
+    align-items: center;
     background-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.15);
     opacity: 1;
     border-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.2);
@@ -559,12 +558,8 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 /* 折叠状态下的括号样式增强 */
 .collapsible.collapsed ~ .json-array,
 .collapsible.collapsed ~ .json-object {
-    position: relative;
-    background-color: rgba(80, 80, 80, 0.1);
-    border-radius: 3px;
-    padding: 2px 4px;
-    margin: 0 2px;
-    pointer-events: none;
+    display: inline-flex;
+    align-items: center;
 }
 
 [data-theme="light"] .collapsible.collapsed ~ .json-array,
@@ -1115,4 +1110,67 @@ html[data-theme="light"] .collapsible.collapsed + .bracket-container:after {
 
 [data-theme="light"] .badge-preview::before {
     background-color: rgba(0, 0, 0, 0.15);
+}
+
+/* 改进json-node结构，确保元素对齐 */
+.json-node {
+    display: inline-flex;
+    align-items: center;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    flex-wrap: nowrap;
+}
+
+/* 优化折叠状态下的视觉效果 */
+.collapsible.collapsed ~ .json-array,
+.collapsible.collapsed ~ .json-object,
+.collapsible.collapsed + .json-array,
+.collapsible.collapsed + .json-object {
+    position: relative;
+    background-color: rgba(80, 80, 80, 0.05);
+    border-radius: 3px;
+    padding: 1px 4px;
+    margin: 0 2px;
+}
+
+/* 修复汉字在折叠状态下的显示 */
+.collapsible.collapsed + .bracket-container {
+    display: inline-flex;
+    align-items: center;
+}
+
+/* 调整简介在折叠状态下的位置和样式 */
+.summary-badge {
+    display: none;
+    margin-left: 6px;
+    margin-right: 0;
+    font-size: 11px;
+    background-color: rgba(70, 70, 70, 0.12);
+    padding: 1px 8px;
+    border-radius: 10px;
+    opacity: 0.95;
+    user-select: none;
+    white-space: nowrap;
+    max-width: 300px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Ubuntu, sans-serif;
+    font-weight: 400;
+    letter-spacing: 0.2px;
+    border: 1px solid rgba(100, 100, 100, 0.1);
+    vertical-align: middle;
+    line-height: 1.5;
+}
+
+/* 折叠状态下的简介样式 */
+.collapsible.collapsed ~ .summary-badge,
+.json-node:has(.collapsible.collapsed) .summary-badge,
+.collapsible.collapsed + span + .summary-badge {
+    display: inline-flex;
+    align-items: center;
+    margin-left: 6px;
+    background-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.08);
+    border-color: rgba(var(--accent-color-rgb, 0, 120, 212), 0.15);
 }
