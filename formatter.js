@@ -499,25 +499,16 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadExample() {
         try {
             const exampleJson = {
-                "name": "W-JSON Formatter",
-                "version": "1.0",
-                "description": "一个精美的JSON格式化工具",
-                "features": [
-                    "语法高亮",
-                    "格式化",
-                    "压缩",
-                    "折叠/展开"
-                ],
-                "settings": {
-                    "theme": "light",
-                    "autoFormat": true,
-                    "indentation": 4
+                "status": 0,
+                "message": "Success",
+                "data": {
+                    "items": [ /* 10项 */ ],
+                    "cursor": "1",
+                    "hasNext": true,
+                    "total": 2525
                 },
-                "stats": {
-                    "users": 1000,
-                    "ratings": 4.9,
-                    "downloads": 5000
-                }
+                "timestamp": 174252449951,
+                "success": true
             };
             
             input.value = JSON.stringify(exampleJson, null, 4);
