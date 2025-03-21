@@ -241,7 +241,10 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 添加简介内容，确保在折叠状态下可见
             if (node.length > 0) {
-                html += '<span class="summary-badge">' + node.length + '项</span>';
+                html += '<span class="summary-badge">' + 
+                    '<span class="badge-count">' + node.length + '</span>' + 
+                    '<span class="badge-type">项</span>' + 
+                '</span>';
             }
             
             html += '</span>';  // 结束json-node
@@ -283,7 +286,11 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // 添加简介内容，确保在折叠状态下可见
             if (keys.length > 0) {
-                html += '<span class="summary-badge">' + keys.length + '属性 ' + keyPreview + '</span>';
+                html += '<span class="summary-badge">' + 
+                    '<span class="badge-count">' + keys.length + '</span>' + 
+                    '<span class="badge-type">属性</span>' + 
+                    (keyPreview ? '<span class="badge-preview">' + keyPreview + '</span>' : '') + 
+                '</span>';
             }
             
             html += '</span>';  // 结束json-node
