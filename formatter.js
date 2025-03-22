@@ -1,15 +1,14 @@
 document.addEventListener('DOMContentLoaded', function() {
     const input = document.getElementById('input');
     const jsonViewer = document.getElementById('json-viewer');
-    const formatBtn = document.getElementById('formatBtn');
     const toast = document.getElementById('toast');
     const toggleAllBtn = document.getElementById('toggleAllBtn');
+    const historyBtn = document.getElementById('historyBtn');
     
     // 检查DOM元素是否存在
     const checkElements = [
         { name: 'input', element: input },
         { name: 'jsonViewer', element: jsonViewer },
-        { name: 'formatBtn', element: formatBtn },
         { name: 'toast', element: toast },
         { name: 'toggleAllBtn', element: toggleAllBtn }
     ];
@@ -339,6 +338,44 @@ document.addEventListener('DOMContentLoaded', function() {
         return '';
     }
     
+    // 保存JSON到历史记录
+    function saveToHistory(jsonString) {
+        try {
+            // 从localStorage获取现有历史记录
+            let history = JSON.parse(localStorage.getItem('jsonFormatterHistory')) || [];
+            
+            // 检查是否已存在相同内容的记录
+            const existingIndex = history.findIndex(item => item.content === jsonString);
+            
+            // 如果存在相同内容的记录，先删除旧记录
+            if (existingIndex !== -1) {
+                console.log('发现重复内容，删除旧记录');
+                history.splice(existingIndex, 1);
+            }
+            
+            // 创建新的历史记录项
+            const historyItem = {
+                id: Date.now().toString(), // 使用时间戳作为唯一ID
+                content: jsonString,
+                timestamp: Date.now()
+            };
+            
+            // 添加到历史记录
+            history.push(historyItem);
+            
+            // 限制历史记录数量，最多保存50条
+            if (history.length > 50) {
+                history = history.slice(history.length - 50);
+            }
+            
+            // 保存回localStorage
+            localStorage.setItem('jsonFormatterHistory', JSON.stringify(history));
+            console.log('已保存到历史记录');
+        } catch (e) {
+            console.error('保存历史记录失败:', e);
+        }
+    }
+
     // 处理输入
     function processInput() {
         try {
@@ -355,6 +392,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 尝试解析JSON，如果失败则显示错误
                 const parsedJson = JSON.parse(value);
                 console.log("JSON解析成功，类型:", Array.isArray(parsedJson) ? "数组" : typeof parsedJson);
+                
+                // 保存到历史记录
+                saveToHistory(value);
                 
                 console.log("开始生成格式化HTML");
                 const formattedHtml = createJsonView(parsedJson);
@@ -397,19 +437,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // 监听输入变化
     input.addEventListener('input', debounce(processInput, 300));
     
-    // 格式化按钮
-    formatBtn.addEventListener('click', () => {
-        if (input.value.trim()) {
-            processInput();
-            showToast('格式化成功');
-            
-            // 添加动画效果
-            formatBtn.classList.add('btn-active');
-            setTimeout(() => formatBtn.classList.remove('btn-active'), 300);
-        } else {
-            showToast("请输入JSON数据");
-        }
+    // 自动格式化输入
+    // 注意：格式化按钮已移除，改为自动处理输入
+    input.addEventListener('paste', () => {
+        // 给一点延迟让粘贴内容填充到输入框
+        setTimeout(() => {
+            if (input.value.trim()) {
+                processInput();
+                showToast('格式化成功');
+            }
+        }, 100);
     });
+
     
     // 展开/折叠切换按钮
     if (toggleAllBtn) {
@@ -518,9 +557,26 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
     
+    // 检查sessionStorage中是否有选中的JSON
+    function checkSelectedJson() {
+        const selectedJson = sessionStorage.getItem('selectedJson');
+        if (selectedJson) {
+            // 清除sessionStorage中的数据，避免重复加载
+            sessionStorage.removeItem('selectedJson');
+            input.value = selectedJson;
+            processInput();
+            showToast('已加载历史记录');
+            return true;
+        }
+        return false;
+    }
+    
     // 检查是否有内容，如果没有，加载示例
     if (!input.value.trim()) {
-        setTimeout(loadExample, 300);
+        // 先检查是否有从历史记录页面选择的JSON
+        if (!checkSelectedJson()) {
+            setTimeout(loadExample, 300);
+        }
     } else {
         processInput();
     }
