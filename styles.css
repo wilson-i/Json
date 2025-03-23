@@ -58,11 +58,15 @@ pre::-webkit-scrollbar-thumb:hover {
 /* 数组样式 */
 .json-array {
     color: #4a9eff;
+    font-weight: 600;
+    text-shadow: 0 0 1px rgba(74, 158, 255, 0.3);
 }
 
 /* 对象样式 */
 .json-object {
-    color: #c586c0;
+    color: #d670d6;
+    font-weight: 600;
+    text-shadow: 0 0 1px rgba(214, 112, 214, 0.3);
 }
 
 /* 折叠时的样式 */
@@ -81,14 +85,15 @@ pre::-webkit-scrollbar-thumb:hover {
 }
 
 .line-content:hover {
-    background-color: rgba(100, 100, 100, 0.15);
-    box-shadow: 0 0 0 1px rgba(100, 100, 100, 0.1) inset;
+    background-color: rgba(100, 100, 100, 0.25);
+    box-shadow: 0 0 0 1px rgba(100, 100, 100, 0.2) inset;
     z-index: 1;
+    border-radius: 4px;
 }
 
 html[data-theme="light"] .line-content:hover {
-    background-color: rgba(0, 0, 0, 0.06);
-    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.05) inset;
+    background-color: rgba(0, 0, 0, 0.05);
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.03) inset;
 }
 
 /* 防止悬停效果叠加 */
@@ -130,7 +135,9 @@ html[data-theme="light"] .line-content:hover {
     --btn-hover-bg: #d0d0d0;
     --btn-hover-color: #000;
     --accent-color: #0078d4;
- /* ... 现有样式 ... */
+    --accent-hover: #106ebe;
+    --background-color: #ffffff;
+}
 
 /* 优化弹窗样式 */
 .modal {
@@ -140,8 +147,8 @@ html[data-theme="light"] .line-content:hover {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    backdrop-filter: blur(8px);
+    background-color: rgba(0, 0, 0, 0.75);
+    backdrop-filter: blur(10px);
     z-index: 1000;
     align-items: center;
     justify-content: center;
@@ -155,8 +162,8 @@ html[data-theme="light"] .line-content:hover {
 }
 
 html[data-theme="light"] .modal {
-    background-color: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(6px);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(8px);
 }
 
 .modal-content {
@@ -165,7 +172,7 @@ html[data-theme="light"] .modal {
     padding: 0;
     width: 450px;
     max-width: 90%;
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3), 0 8px 15px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.35), 0 10px 20px rgba(0, 0, 0, 0.2);
     transform: scale(0.95);
     opacity: 0;
     transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.25s ease;
@@ -185,7 +192,8 @@ html[data-theme="light"] .modal {
     justify-content: space-between;
     align-items: center;
     position: relative;
-    background-color: rgba(0, 0, 0, 0.02);
+    background-color: rgba(0, 0, 0, 0.05);
+    background-image: linear-gradient(to right, rgba(0, 0, 0, 0.03), transparent);
 }
 
 .modal-title {
@@ -206,18 +214,25 @@ html[data-theme="light"] .modal {
     font-size: 16px;
     padding: 5px;
     border-radius: 50%;
-    width: 30px;
-    height: 30px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
 }
 
 .modal-close-btn:hover {
     opacity: 1;
-    background-color: rgba(0, 0, 0, 0.05);
+    background-color: rgba(255, 59, 48, 0.15);
+    color: #ff3b30;
     transform: rotate(90deg);
+}
+
+.modal-close-btn:active {
+    transform: rotate(90deg) scale(0.9);
 }
 
 .modal-body {
@@ -227,6 +242,7 @@ html[data-theme="light"] .modal {
     font-size: 15px;
     line-height: 1.6;
     color: var(--text-color);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.01), transparent);
 }
 
 .modal-footer {
@@ -235,7 +251,8 @@ html[data-theme="light"] .modal {
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    background-color: rgba(0, 0, 0, 0.03);
+    background-color: rgba(0, 0, 0, 0.04);
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0.05), transparent);
 }
 
 /* 按钮样式优化 */
@@ -261,16 +278,39 @@ html[data-theme="light"] .modal {
     color: white;
     border: 1px solid var(--accent-color);
     padding: 10px 20px;
-    border-radius: 8px;
+    border-radius: 10px;
     font-weight: 500;
     transition: all 0.2s ease;
     box-shadow: 0 2px 6px rgba(0, 120, 212, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-primary:before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0));
+    opacity: 0;
+    transition: opacity 0.2s ease;
 }
 
 .btn-primary:hover {
     background-color: var(--accent-hover);
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 120, 212, 0.4);
+}
+
+.btn-primary:hover:before {
+    opacity: 1;
+}
+
+.btn-primary:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(0, 120, 212, 0.3);
 }
 
 .btn-danger {
@@ -328,8 +368,8 @@ html[data-theme="light"] .modal {
     display: flex;
     flex-direction: column;
     background-color: var(--background-color);
-    border-radius: 16px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 10px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.35), 0 15px 25px rgba(0, 0, 0, 0.25);
     border: 1px solid var(--border-color);
     overflow: hidden;
 }
@@ -347,7 +387,7 @@ html[data-theme="light"] .modal {
 }
 
 .json-detail {
-    background-color: #1e1e1e;
+    background-color: #121212;
     padding: 24px;
     max-height: 65vh;
     overflow: auto;
@@ -355,8 +395,8 @@ html[data-theme="light"] .modal {
     font-size: 14px;
     margin: 0;
     line-height: 1.6;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-    color: #d4d4d4;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+    color: #e8e8e8;
 }
 
 html[data-theme="light"] .json-detail {
@@ -399,7 +439,7 @@ html[data-theme="light"] .json-detail::-webkit-scrollbar-thumb {
     background-clip: padding-box;
 }
 /* ... 现有样式 ... */   
---accent-hover: #106ebe;
+--accent-hover {
     --box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
 }
 
@@ -731,33 +771,38 @@ html[data-theme="light"] ::-webkit-scrollbar-thumb:hover {
 
 /* 改进JSON高亮和交互 */
 .json-key { 
-    color: #9cdcfe; 
+    color: #36c6ff; 
     font-weight: 600;
     margin-right: 0;
     transition: all 0.2s;
+    text-shadow: 0 0 1px rgba(54, 198, 255, 0.3);
 }
 
 .json-string { 
-    color: #ce9178; 
+    color: #ff9170; 
     transition: all 0.2s;
+    text-shadow: 0 0 1px rgba(255, 145, 112, 0.3);
 }
 
 .json-number { 
-    color: #b5cea8; 
+    color: #b5ff9d; 
     font-weight: 500;
     transition: all 0.2s;
+    text-shadow: 0 0 1px rgba(181, 255, 157, 0.3);
 }
 
 .json-boolean { 
     color: #569cd6; 
     font-weight: 600;
     transition: all 0.2s;
+    text-shadow: 0 0 1px rgba(86, 156, 214, 0.3);
 }
 
 .json-null { 
     color: #569cd6; 
     font-style: italic;
     transition: all 0.2s;
+    text-shadow: 0 0 1px rgba(86, 156, 214, 0.2);
 }
 
 /* 浅色主题下的JSON高亮 */
@@ -811,6 +856,9 @@ html[data-theme="light"] .json-null {
     display: flex;
     align-items: center;
     justify-content: center;
+    color: #888;
+    width: 16px;
+    height: 16px;
 }
 
 .collapsible::before {
@@ -826,8 +874,10 @@ html[data-theme="light"] .json-null {
 .collapsible:hover {
     color: var(--accent-color);
     opacity: 1;
-    transform: none !important;
+    transform: scale(1.1) !important;
     box-shadow: none !important;
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
 }
 
 .collapsible.collapsed {
@@ -1012,17 +1062,24 @@ html[data-theme="light"] .json-null {
     height: 100%;
     margin: 0;
     padding: var(--panel-padding);
-    background: var(--hover-color);
+    background: #1e1e1e;
     border: 1px solid var(--border-color);
     border-radius: var(--border-radius);
     overflow: auto;
     font-size: 14px;
     white-space: pre;
     font-family: 'Monaco', 'Menlo', monospace;
-    line-height: 1.6;
+    line-height: 1.7;
     letter-spacing: 0.3px;
     box-sizing: border-box;
     transition: all var(--transition-speed);
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+}
+
+html[data-theme="light"] .json-viewer {
+    background-color: #ffffff;
+    border-color: #ddd;
+    box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.05);
 }
 
 /* 优化折叠视图 */
